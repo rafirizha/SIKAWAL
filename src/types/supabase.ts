@@ -232,7 +232,41 @@ export type Database = {
       >;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      create_draft_letter: {
+        Args: {
+          input_letter_id: string;
+          input_subject: string;
+          input_recipient: string;
+          input_letter_date: string;
+          input_creator_user_id: string;
+          input_team_id: string;
+          input_google_doc_id?: string | null;
+          input_google_doc_url?: string | null;
+          input_data_classification?: string;
+          input_storage_path?: string | null;
+          input_file_url?: string | null;
+          input_file_mime_type?: string | null;
+          input_file_size_bytes?: number | null;
+          input_checksum_sha256?: string | null;
+          input_source_type?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string | null;
+        }[];
+      };
+      submit_draft_to_general_subdivision: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string | null;
+        }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

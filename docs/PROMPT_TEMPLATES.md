@@ -59,8 +59,8 @@ Implement fitur [nama fitur] untuk SIKAWAL.
 
 Konteks fitur:
 - Tujuan: [jelaskan tujuan fitur]
-- Role terkait: [Pegawai/Ketua Tim/Kepala BPS/Admin]
-- Status terkait: [Draft/Menunggu Koreksi Ketua Tim/dst]
+- Role terkait: [Pegawai/Kasubbag Umum/Kepala BPS/Admin]
+- Status terkait: [Draft/Menunggu Koreksi Kasubbag Umum/dst]
 - Data terkait: [letters/letter_versions/approvals/audit_logs/correction_snapshot_jobs]
 
 Acuan wajib:
@@ -102,7 +102,7 @@ Output akhir:
 Gunakan untuk fitur tombol `Selesai Koreksi`.
 
 ```text
-Implement server action/API [completeTeamLeadCorrection atau completeHeadCorrection].
+Implement server action/API [completeGeneralSubdivisionCorrection atau completeHeadCorrection].
 
 Acuan wajib:
 - docs/DOMAIN_RULES.md

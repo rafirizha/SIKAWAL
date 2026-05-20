@@ -59,20 +59,20 @@ P2 = nice-to-have setelah MVP stabil
 
 ## Sprint 3: Draft dan Submit
 
-| ID     | Prioritas | Task                             | Acceptance                                                     | Dependency     | Status |
-| ------ | --------- | -------------------------------- | -------------------------------------------------------------- | -------------- | ------ |
-| BL-014 | P0        | Draft schema validation          | Input invalid ditolak jelas                                    | BL-007         | TODO   |
-| BL-015 | P0        | Google Docs URL parser/validator | Google Doc ID bisa diekstrak                                   | BL-014         | TODO   |
-| BL-016 | P0        | Upload DOCX/PDF initial document | File valid tersimpan via adapter                               | BL-006         | TODO   |
-| BL-017 | P0        | Create draft action              | Status `Draft`, versi awal optional                            | BL-012, BL-014 | TODO   |
-| BL-018 | P0        | Submit draft to Team Lead        | Status `Menunggu Koreksi Ketua Tim`, versi `Draft Pengajuan 1` | BL-012, BL-017 | TODO   |
-| BL-019 | P0        | Draft form UI                    | Pegawai bisa submit draft                                      | BL-015, BL-018 | TODO   |
+| ID     | Prioritas | Task                             | Acceptance                                                         | Dependency     | Status |
+| ------ | --------- | -------------------------------- | ------------------------------------------------------------------ | -------------- | ------ |
+| BL-014 | P0        | Draft schema validation          | Input invalid ditolak jelas                                        | BL-007         | TODO   |
+| BL-015 | P0        | Google Docs URL parser/validator | Google Doc ID bisa diekstrak                                       | BL-014         | TODO   |
+| BL-016 | P0        | Upload DOCX/PDF initial document | File valid tersimpan via adapter                                   | BL-006         | TODO   |
+| BL-017 | P0        | Create draft action              | Status `Draft`, versi awal optional                                | BL-012, BL-014 | TODO   |
+| BL-018 | P0        | Submit draft to Kasubbag Umum    | Status `Menunggu Koreksi Kasubbag Umum`, versi `Draft Pengajuan 1` | BL-012, BL-017 | TODO   |
+| BL-019 | P0        | Draft form UI                    | Pegawai bisa submit draft                                          | BL-015, BL-018 | TODO   |
 
-## Sprint 4: Koreksi Ketua Tim dan Snapshot
+## Sprint 4: Koreksi Kasubbag Umum dan Snapshot
 
 | ID     | Prioritas | Task                          | Acceptance                                               | Dependency     | Status |
 | ------ | --------- | ----------------------------- | -------------------------------------------------------- | -------------- | ------ |
-| BL-020 | P0        | Team Lead dashboard query     | Ketua Tim hanya melihat timnya                           | BL-012, BL-018 | TODO   |
+| BL-020 | P0        | Kasubbag Umum dashboard query | Kasubbag Umum hanya melihat timnya                       | BL-012, BL-018 | TODO   |
 | BL-021 | P0        | Open Google Docs action/link  | Reviewer bisa buka dokumen kerja                         | BL-015, BL-020 | TODO   |
 | BL-022 | P0        | Manual snapshot upload        | Reviewer bisa upload DOCX/PDF koreksi                    | BL-016         | TODO   |
 | BL-023 | P0        | Complete correction action    | Membuat `Draft Dikoreksi 1`, audit, status revisi/lanjut | BL-012, BL-022 | TODO   |
@@ -111,7 +111,7 @@ P2 = nice-to-have setelah MVP stabil
 | BL-041 | P0        | Version immutability tests   | Versi lama tidak tertimpa                               | BL-026         | TODO   |
 | BL-042 | P0        | Upload/export failure tests  | Gagal upload/export tidak membuat versi palsu           | BL-023         | TODO   |
 | BL-043 | P0        | End-to-end one revision path | Draft -> koreksi -> revisi -> approve -> final berhasil | BL-031         | TODO   |
-| BL-044 | P0        | End-to-end two reviewer path | Ketua Tim dan Kepala BPS tercatat lengkap               | BL-031         | TODO   |
+| BL-044 | P0        | End-to-end two reviewer path | Kasubbag Umum dan Kepala BPS tercatat lengkap           | BL-031         | TODO   |
 | BL-045 | P1        | Migration-ready audit        | Provider-specific code tetap di adapter                 | BL-024         | TODO   |
 
 ## P2 Setelah MVP Stabil

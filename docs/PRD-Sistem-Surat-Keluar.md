@@ -45,11 +45,11 @@ Keputusan produk:
 
 - Membuat pengajuan naskah.
 - Menyediakan link Google Docs atau upload DOCX/PDF.
-- Mengirim naskah untuk koreksi Ketua Tim.
+- Mengirim naskah untuk koreksi Kasubbag Umum.
 - Mengirim hasil revisi setelah menerima koreksi.
 - Melihat riwayat koreksi dan finalisasi.
 
-### Ketua Tim/Kasubag
+### Kasubbag Umum
 
 - Menjadi verifikator tahap pertama.
 - Membuka dokumen kerja di Google Docs.
@@ -88,7 +88,7 @@ Penomoran resmi, arsip legal, dan tanda tangan elektronik bukan core business MV
 
 ```text
 Draft Pengajuan 1
--> Draft Dikoreksi 1 oleh Ketua Tim
+-> Draft Dikoreksi 1 oleh Kasubbag Umum
 -> Hasil Revisi 1 oleh Pegawai
 -> Disetujui Kepala BPS
 -> Final
@@ -98,7 +98,7 @@ Draft Pengajuan 1
 
 ```text
 Draft Pengajuan 1
--> Draft Dikoreksi 1 oleh Ketua Tim
+-> Draft Dikoreksi 1 oleh Kasubbag Umum
 -> Hasil Revisi 1 oleh Pegawai
 -> Draft Dikoreksi 2 oleh Kepala BPS
 -> Hasil Revisi 2 oleh Pegawai
@@ -128,7 +128,7 @@ Saat verifikator menekan tombol ini:
    - `comments_json` dari Google Docs jika integrasi tersedia.
    - metadata reviewer, waktu, role, tahap, dan checksum file.
 3. Sistem membuat versi immutable:
-   - `Draft Dikoreksi 1 oleh Ketua Tim`
+   - `Draft Dikoreksi 1 oleh Kasubbag Umum`
    - atau `Draft Dikoreksi 2 oleh Kepala BPS`
 4. Status berubah ke `Perlu Revisi Pegawai` atau `Disetujui Internal`.
 5. Audit log dibuat.
@@ -141,7 +141,7 @@ Status MVP:
 
 ```text
 Draft
-Menunggu Koreksi Ketua Tim
+Menunggu Koreksi Kasubbag Umum
 Perlu Revisi Pegawai
 Menunggu Koreksi Kepala BPS
 Disetujui Internal
@@ -186,13 +186,13 @@ Pegawai dapat membuat pengajuan naskah dengan metadata minimal:
 - Link Google Docs atau file DOCX/PDF.
 - Catatan awal jika diperlukan.
 
-### FR-02 Workflow Ketua Tim
+### FR-02 Workflow Kasubbag Umum
 
-Ketua Tim dapat melihat antrean naskah timnya, membuka Google Docs, memberi koreksi, lalu menekan `Selesai Koreksi` atau menyetujui lanjut ke Kepala BPS.
+Kasubbag Umum dapat melihat antrean naskah timnya, membuka Google Docs, memberi koreksi, lalu menekan `Selesai Koreksi` atau menyetujui lanjut ke Kepala BPS.
 
 ### FR-03 Workflow Kepala BPS
 
-Kepala BPS dapat melihat naskah yang sudah melalui Ketua Tim, memberi koreksi akhir, atau menyetujui internal.
+Kepala BPS dapat melihat naskah yang sudah melalui Kasubbag Umum, memberi koreksi akhir, atau menyetujui internal.
 
 ### FR-04 Snapshot Koreksi
 
@@ -214,7 +214,7 @@ Sistem menampilkan timeline:
 
 ```text
 Draft Pengajuan 1
-Draft Dikoreksi 1 oleh Ketua Tim
+Draft Dikoreksi 1 oleh Kasubbag Umum
 Hasil Revisi 1 oleh Pegawai
 Draft Dikoreksi 2 oleh Kepala BPS
 Hasil Revisi 2 oleh Pegawai
@@ -283,15 +283,15 @@ Scale path:
 ### AC-01 Draft dan Submit
 
 Given Pegawai membuat draft dengan link Google Docs atau file valid  
-When Pegawai mengajukan ke Ketua Tim  
-Then status menjadi `Menunggu Koreksi Ketua Tim`  
+When Pegawai mengajukan ke Kasubbag Umum  
+Then status menjadi `Menunggu Koreksi Kasubbag Umum`  
 And versi `Draft Pengajuan 1` tersimpan.
 
-### AC-02 Selesai Koreksi Ketua Tim
+### AC-02 Selesai Koreksi Kasubbag Umum
 
-Given naskah berstatus `Menunggu Koreksi Ketua Tim`  
-When Ketua Tim menekan `Selesai Koreksi`  
-Then sistem membuat versi `Draft Dikoreksi 1 oleh Ketua Tim`  
+Given naskah berstatus `Menunggu Koreksi Kasubbag Umum`  
+When Kasubbag Umum menekan `Selesai Koreksi`  
+Then sistem membuat versi `Draft Dikoreksi 1 oleh Kasubbag Umum`  
 And status menjadi `Perlu Revisi Pegawai`  
 And audit log dibuat.
 

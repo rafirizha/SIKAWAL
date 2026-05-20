@@ -15,7 +15,7 @@ Contoh:
 
 ```text
 Code: createDraftLetter, correctionSnapshot, approvalAction
-UI: Buat Draft, Selesai Koreksi, Menunggu Koreksi Ketua Tim
+UI: Buat Draft, Selesai Koreksi, Menunggu Koreksi Kasubbag Umum
 DB: letters, letter_versions, correction_snapshot_jobs
 ```
 
@@ -46,7 +46,7 @@ idx_letter_versions_letter_id
 idx_correction_snapshot_jobs_letter_id
 ```
 
-Nilai status yang disimpan di database mengikuti domain docs, misalnya `Draft`, `Menunggu Koreksi Ketua Tim`, dan `Final`. Di TypeScript, nilai tersebut wajib dibungkus constant agar tidak tersebar sebagai string literal.
+Nilai status yang disimpan di database mengikuti domain docs, misalnya `Draft`, `Menunggu Koreksi Kasubbag Umum`, dan `Final`. Di TypeScript, nilai tersebut wajib dibungkus constant agar tidak tersebar sebagai string literal.
 
 ## TypeScript
 
@@ -129,7 +129,7 @@ Contoh:
 ```ts
 export const LETTER_STATUS = {
   DRAFT: "Draft",
-  WAITING_TEAM_LEAD_CORRECTION: "Menunggu Koreksi Ketua Tim",
+  WAITING_GENERAL_SUBDIVISION_CORRECTION: "Menunggu Koreksi Kasubbag Umum",
   NEEDS_REVISION: "Perlu Revisi",
   WAITING_HEAD_CORRECTION: "Menunggu Koreksi Kepala BPS",
   INTERNALLY_APPROVED: "Disetujui Internal",
@@ -143,7 +143,7 @@ Role juga harus dibungkus constant:
 ```ts
 export const USER_ROLE = {
   EMPLOYEE: "Pegawai",
-  TEAM_LEAD: "Ketua Tim",
+  GENERAL_SUBDIVISION_HEAD: "Kasubbag Umum",
   HEAD: "Kepala BPS",
   ADMIN: "Admin",
 } as const;
@@ -179,10 +179,10 @@ Contoh:
 
 ```text
 createDraftLetter
-submitDraftToTeamLead
+submitDraftToGeneralSubdivision
 requestRevision
 submitRevision
-completeTeamLeadCorrection
+completeGeneralSubdivisionCorrection
 forwardToHead
 completeHeadCorrection
 approveInternal
@@ -200,7 +200,7 @@ Contoh:
 canViewLetter
 canEditDraft
 canSubmitDraft
-canCompleteTeamLeadCorrection
+canCompleteGeneralSubdivisionCorrection
 canForwardToHead
 canCompleteHeadCorrection
 canApproveInternal

@@ -1,13 +1,13 @@
 export const USER_ROLE = {
   EMPLOYEE: "Pegawai",
-  TEAM_LEAD: "Ketua Tim",
+  GENERAL_SUBDIVISION_HEAD: "Kasubbag Umum",
   HEAD: "Kepala BPS",
   ADMIN: "Admin",
 } as const;
 
 export const LETTER_STATUS = {
   DRAFT: "Draft",
-  WAITING_TEAM_LEAD_CORRECTION: "Menunggu Koreksi Ketua Tim",
+  WAITING_GENERAL_SUBDIVISION_CORRECTION: "Menunggu Koreksi Kasubbag Umum",
   NEEDS_REVISION: "Perlu Revisi Pegawai",
   WAITING_HEAD_CORRECTION: "Menunggu Koreksi Kepala BPS",
   INTERNALLY_APPROVED: "Disetujui Internal",

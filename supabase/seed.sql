@@ -16,9 +16,9 @@ values
   ),
   (
     '20000000-0000-0000-0000-000000000002',
-    'Ketua Tim Dummy',
-    'ketua-tim@example.test',
-    'Ketua Tim',
+    'Kasubbag Umum Dummy',
+    'kasubbag-umum@example.test',
+    'Kasubbag Umum',
     '10000000-0000-0000-0000-000000000001',
     true
   ),
@@ -64,8 +64,8 @@ values (
   '2026-05-20',
   '20000000-0000-0000-0000-000000000001',
   '10000000-0000-0000-0000-000000000001',
-  'Menunggu Koreksi Ketua Tim',
-  'Ketua Tim',
+  'Menunggu Koreksi Kasubbag Umum',
+  'Kasubbag Umum',
   0,
   'https://docs.google.com/document/d/dummy-document-id/edit',
   'dummy'
@@ -95,4 +95,3 @@ values (
   '20000000-0000-0000-0000-000000000001'
 )
 on conflict (id) do nothing;
-

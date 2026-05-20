@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   canCompleteHeadCorrection,
-  canCompleteTeamLeadCorrection,
+  canCompleteGeneralSubdivisionCorrection,
   canCreateDraft,
   canSubmitDraft,
   canSubmitRevision,
@@ -27,9 +27,9 @@ const otherEmployee: PermissionUser = {
   isActive: true,
 };
 
-const teamLead: PermissionUser = {
-  id: "lead-1",
-  role: USER_ROLE.TEAM_LEAD,
+const generalSubdivisionHead: PermissionUser = {
+  id: "general-subdivision-head-1",
+  role: USER_ROLE.GENERAL_SUBDIVISION_HEAD,
   teamId: "team-1",
   isActive: true,
 };
@@ -55,16 +55,16 @@ const draftLetter: PermissionLetter = {
 };
 
 describe("letter permissions", () => {
-  it("allows employee and team lead to create drafts but rejects head", () => {
+  it("allows employee and Kasubbag Umum to create drafts but rejects head", () => {
     expect(canCreateDraft(employee)).toBe(true);
-    expect(canCreateDraft(teamLead)).toBe(true);
+    expect(canCreateDraft(generalSubdivisionHead)).toBe(true);
     expect(canCreateDraft(head)).toBe(false);
   });
 
   it("keeps employee drafts private before submit", () => {
     expect(canViewLetter(employee, draftLetter)).toBe(true);
     expect(canViewLetter(otherEmployee, draftLetter)).toBe(false);
-    expect(canViewLetter(teamLead, draftLetter)).toBe(false);
+    expect(canViewLetter(generalSubdivisionHead, draftLetter)).toBe(false);
     expect(canViewLetter(admin, draftLetter)).toBe(true);
   });
 
@@ -74,14 +74,21 @@ describe("letter permissions", () => {
     expect(canSubmitDraft(admin, draftLetter)).toBe(true);
   });
 
-  it("allows team lead correction only for same-team waiting documents", () => {
+  it("allows Kasubbag Umum correction only for same-team waiting documents", () => {
     const waitingLetter = {
       ...draftLetter,
-      status: LETTER_STATUS.WAITING_TEAM_LEAD_CORRECTION,
+      status: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
     };
 
-    expect(canCompleteTeamLeadCorrection(teamLead, waitingLetter)).toBe(true);
-    expect(canCompleteTeamLeadCorrection(head, waitingLetter)).toBe(false);
+    expect(
+      canCompleteGeneralSubdivisionCorrection(
+        generalSubdivisionHead,
+        waitingLetter,
+      ),
+    ).toBe(true);
+    expect(canCompleteGeneralSubdivisionCorrection(head, waitingLetter)).toBe(
+      false,
+    );
   });
 
   it("allows head correction only at head review stage", () => {
@@ -91,7 +98,9 @@ describe("letter permissions", () => {
     };
 
     expect(canCompleteHeadCorrection(head, headLetter)).toBe(true);
-    expect(canCompleteHeadCorrection(teamLead, headLetter)).toBe(false);
+    expect(canCompleteHeadCorrection(generalSubdivisionHead, headLetter)).toBe(
+      false,
+    );
   });
 
   it("allows creator to submit revision only when revision is required", () => {
@@ -109,15 +118,18 @@ describe("letter permissions", () => {
       ...draftLetter,
       status: LETTER_STATUS.FINAL,
     };
-    const teamLeadOwnedFinalLetter = {
+    const generalSubdivisionOwnedFinalLetter = {
       ...finalLetter,
-      creatorUserId: teamLead.id,
+      creatorUserId: generalSubdivisionHead.id,
     };
 
     expect(canUpdateSrikandiReference(employee, finalLetter)).toBe(true);
-    expect(canUpdateSrikandiReference(teamLead, teamLeadOwnedFinalLetter)).toBe(
-      false,
-    );
+    expect(
+      canUpdateSrikandiReference(
+        generalSubdivisionHead,
+        generalSubdivisionOwnedFinalLetter,
+      ),
+    ).toBe(false);
     expect(canUpdateSrikandiReference(head, finalLetter)).toBe(true);
     expect(canUpdateSrikandiReference(admin, finalLetter)).toBe(true);
     expect(canUpdateSrikandiReference(employee, draftLetter)).toBe(false);

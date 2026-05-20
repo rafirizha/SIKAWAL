@@ -31,7 +31,7 @@ Role:
 
 ```text
 Pegawai
-Ketua Tim
+Kasubbag Umum
 Kepala BPS
 Admin
 ```
@@ -78,7 +78,7 @@ Check constraint:
 ```text
 status in (
   'Draft',
-  'Menunggu Koreksi Ketua Tim',
+  'Menunggu Koreksi Kasubbag Umum',
   'Perlu Revisi Pegawai',
   'Menunggu Koreksi Kepala BPS',
   'Disetujui Internal',

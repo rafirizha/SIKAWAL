@@ -105,8 +105,8 @@ Contoh action:
 
 ```text
 createDraftLetter()
-submitDraftToTeamLead()
-completeTeamLeadCorrection()
+submitDraftToGeneralSubdivision()
+completeGeneralSubdivisionCorrection()
 submitRevision()
 forwardToHead()
 completeHeadCorrection()
@@ -207,6 +207,7 @@ MAX_DOCX_UPLOAD_MB
 MAX_PDF_UPLOAD_MB
 DATA_PILOT_MODE
 STORAGE_PROVIDER
+LETTER_DOCUMENTS_BUCKET
 GOOGLE_APPS_SCRIPT_EXPORT_URL
 GOOGLE_INTEGRATION_MODE
 ```

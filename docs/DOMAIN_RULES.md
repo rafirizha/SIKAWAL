@@ -8,7 +8,7 @@ Status MVP:
 
 ```text
 Draft
-Menunggu Koreksi Ketua Tim
+Menunggu Koreksi Kasubbag Umum
 Perlu Revisi Pegawai
 Menunggu Koreksi Kepala BPS
 Disetujui Internal
@@ -26,14 +26,14 @@ Dibatalkan
 ## Transisi Status Yang Valid
 
 ```text
-Draft -> Menunggu Koreksi Ketua Tim
+Draft -> Menunggu Koreksi Kasubbag Umum
 Draft -> Dibatalkan
 
-Menunggu Koreksi Ketua Tim -> Perlu Revisi Pegawai
-Menunggu Koreksi Ketua Tim -> Menunggu Koreksi Kepala BPS
-Menunggu Koreksi Ketua Tim -> Dibatalkan
+Menunggu Koreksi Kasubbag Umum -> Perlu Revisi Pegawai
+Menunggu Koreksi Kasubbag Umum -> Menunggu Koreksi Kepala BPS
+Menunggu Koreksi Kasubbag Umum -> Dibatalkan
 
-Perlu Revisi Pegawai -> Menunggu Koreksi Ketua Tim
+Perlu Revisi Pegawai -> Menunggu Koreksi Kasubbag Umum
 Perlu Revisi Pegawai -> Menunggu Koreksi Kepala BPS
 Perlu Revisi Pegawai -> Dibatalkan
 
@@ -53,14 +53,14 @@ Dibatalkan -> terminal
 Alur utama:
 
 ```text
-Pegawai/Penyusun -> Ketua Tim/Kasubag -> Kepala BPS/Bapak -> Final
+Pegawai/Penyusun -> Kasubbag Umum -> Kepala BPS/Bapak -> Final
 ```
 
 Aturan:
 
 - Pegawai hanya dapat mengajukan dan merevisi dokumen miliknya sendiri, kecuali admin.
-- Ketua Tim hanya dapat mengoreksi dokumen dari timnya.
-- Kepala BPS dapat mengoreksi dokumen yang sudah melewati Ketua Tim atau ditujukan ke tahap Kepala BPS.
+- Kasubbag Umum hanya dapat mengoreksi dokumen dari timnya.
+- Kepala BPS dapat mengoreksi dokumen yang sudah melewati Kasubbag Umum atau ditujukan ke tahap Kepala BPS.
 - Admin dapat membantu lintas role, tetapi semua perubahan admin wajib audit log.
 
 ## Tombol Selesai Koreksi
@@ -78,7 +78,7 @@ Saat tombol ditekan, sistem wajib:
 - Membuat audit log.
 - Mengubah status:
   - ke `Perlu Revisi Pegawai` jika perlu revisi.
-  - ke `Menunggu Koreksi Kepala BPS` jika Ketua Tim menyetujui lanjut.
+  - ke `Menunggu Koreksi Kepala BPS` jika Kasubbag Umum menyetujui lanjut.
   - ke `Disetujui Internal` jika Kepala BPS menyetujui.
 
 Catatan: export otomatis dari Google Docs boleh gagal. Fallback manual upload harus tetap tersedia.

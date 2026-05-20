@@ -67,19 +67,19 @@ Output:
 - Validasi link Google Docs.
 - Upload DOCX/PDF awal.
 - Version `Draft Pengajuan 1`.
-- Submit ke Ketua Tim.
+- Submit ke Kasubbag Umum.
 
 Exit criteria:
 
 - Pegawai bisa membuat draft.
-- Draft bisa diajukan ke Ketua Tim.
+- Draft bisa diajukan ke Kasubbag Umum.
 - Versi awal tersimpan immutable.
 
-## Phase 4: Koreksi Ketua Tim
+## Phase 4: Koreksi Kasubbag Umum
 
 Output:
 
-- Dashboard antrean Ketua Tim.
+- Dashboard antrean Kasubbag Umum.
 - Tombol buka Google Docs.
 - Action `Selesai Koreksi`.
 - Upload/export snapshot manual/otomatis.
@@ -88,7 +88,7 @@ Output:
 
 Exit criteria:
 
-- Ketua Tim hanya melihat dokumen timnya.
+- Kasubbag Umum hanya melihat dokumen timnya.
 - Snapshot koreksi tersimpan.
 - Audit log dibuat.
 
@@ -106,7 +106,7 @@ Exit criteria:
 
 - Pegawai bisa mengirim revisi.
 - Versi lama tidak tertimpa.
-- Status kembali ke Ketua Tim atau Kepala BPS sesuai tahap.
+- Status kembali ke Kasubbag Umum atau Kepala BPS sesuai tahap.
 
 ## Phase 6: Koreksi dan Persetujuan Kepala BPS
 
@@ -156,7 +156,7 @@ Exit criteria:
 
 Test wajib:
 
-- Permission Pegawai, Ketua Tim, Kepala BPS, Admin.
+- Permission Pegawai, Kasubbag Umum, Kepala BPS, Admin.
 - Transition status valid/invalid.
 - `Selesai Koreksi` membuat snapshot/version/audit.
 - Hasil revisi wajib `change_summary`.

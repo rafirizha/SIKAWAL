@@ -21,6 +21,7 @@ export const serverEnvSchema = publicEnvSchema.extend({
     .enum(["dummy", "anonymized", "approved_real_data"])
     .default("dummy"),
   STORAGE_PROVIDER: z.enum(["supabase", "internal", "s3"]).default("supabase"),
+  LETTER_DOCUMENTS_BUCKET: z.string().min(1).default("letter-documents"),
   GOOGLE_APPS_SCRIPT_EXPORT_URL: optionalUrlSchema,
   GOOGLE_INTEGRATION_MODE: z.enum(["manual", "apps_script"]).default("manual"),
 });

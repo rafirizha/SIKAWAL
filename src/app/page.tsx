@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { LETTER_STATUS, VERSION_TYPE } from "@/lib/workflow/constants";
@@ -8,7 +10,7 @@ const statusItems = [
     value: "0",
   },
   {
-    label: LETTER_STATUS.WAITING_TEAM_LEAD_CORRECTION,
+    label: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
     value: "0",
   },
   {
@@ -44,7 +46,9 @@ export default function Home() {
                 history versi, status, dan audit sebelum final atau SRIKANDI.
               </p>
             </div>
-            <Button type="button">Buat Draft</Button>
+            <Button asChild>
+              <Link href="/letters/new">Buat Draft</Link>
+            </Button>
           </div>
         </section>
 

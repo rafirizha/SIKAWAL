@@ -44,7 +44,7 @@ export function canCreateDraft(user: PermissionUser) {
   return (
     isActive(user) &&
     (hasRole(user, USER_ROLE.EMPLOYEE) ||
-      hasRole(user, USER_ROLE.TEAM_LEAD) ||
+      hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD) ||
       isAdmin(user))
   );
 }
@@ -58,7 +58,7 @@ export function canViewLetter(user: PermissionUser, letter: PermissionLetter) {
     return false;
   }
 
-  if (hasRole(user, USER_ROLE.TEAM_LEAD)) {
+  if (hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD)) {
     return isSameTeam(user, letter);
   }
 
@@ -80,7 +80,8 @@ export function canEditDraft(user: PermissionUser, letter: PermissionLetter) {
   return (
     isOwner(user, letter) &&
     letter.status === LETTER_STATUS.DRAFT &&
-    (hasRole(user, USER_ROLE.EMPLOYEE) || hasRole(user, USER_ROLE.TEAM_LEAD))
+    (hasRole(user, USER_ROLE.EMPLOYEE) ||
+      hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD))
   );
 }
 
@@ -91,23 +92,26 @@ export function canSubmitDraft(user: PermissionUser, letter: PermissionLetter) {
   return (
     isOwner(user, letter) &&
     letter.status === LETTER_STATUS.DRAFT &&
-    (hasRole(user, USER_ROLE.EMPLOYEE) || hasRole(user, USER_ROLE.TEAM_LEAD))
+    (hasRole(user, USER_ROLE.EMPLOYEE) ||
+      hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD))
   );
 }
 
-export function canCompleteTeamLeadCorrection(
+export function canCompleteGeneralSubdivisionCorrection(
   user: PermissionUser,
   letter: PermissionLetter,
 ) {
   if (!isActive(user)) return false;
   if (isAdmin(user)) {
-    return letter.status === LETTER_STATUS.WAITING_TEAM_LEAD_CORRECTION;
+    return (
+      letter.status === LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION
+    );
   }
 
   return (
-    hasRole(user, USER_ROLE.TEAM_LEAD) &&
+    hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD) &&
     isSameTeam(user, letter) &&
-    letter.status === LETTER_STATUS.WAITING_TEAM_LEAD_CORRECTION
+    letter.status === LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION
   );
 }
 
@@ -115,7 +119,7 @@ export function canForwardToHead(
   user: PermissionUser,
   letter: PermissionLetter,
 ) {
-  return canCompleteTeamLeadCorrection(user, letter);
+  return canCompleteGeneralSubdivisionCorrection(user, letter);
 }
 
 export function canCompleteHeadCorrection(
@@ -150,7 +154,8 @@ export function canSubmitRevision(
   return (
     isOwner(user, letter) &&
     letter.status === LETTER_STATUS.NEEDS_REVISION &&
-    (hasRole(user, USER_ROLE.EMPLOYEE) || hasRole(user, USER_ROLE.TEAM_LEAD))
+    (hasRole(user, USER_ROLE.EMPLOYEE) ||
+      hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD))
   );
 }
 
@@ -189,11 +194,11 @@ export function canCancelLetter(
   if (isAdmin(user)) return true;
   if (isOwner(user, letter)) return true;
 
-  if (hasRole(user, USER_ROLE.TEAM_LEAD)) {
+  if (hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD)) {
     return (
       isSameTeam(user, letter) &&
       isStatusIn(letter.status, [
-        LETTER_STATUS.WAITING_TEAM_LEAD_CORRECTION,
+        LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
         LETTER_STATUS.NEEDS_REVISION,
       ])
     );
@@ -215,7 +220,7 @@ export function canViewAuditLog(
   if (isOwner(user, letter)) return true;
 
   return (
-    hasRole(user, USER_ROLE.TEAM_LEAD) &&
+    hasRole(user, USER_ROLE.GENERAL_SUBDIVISION_HEAD) &&
     isSameTeam(user, letter) &&
     letter.status !== LETTER_STATUS.DRAFT
   );
