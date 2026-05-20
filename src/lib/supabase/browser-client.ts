@@ -1,0 +1,15 @@
+"use client";
+
+import { createBrowserClient } from "@supabase/ssr";
+
+import { getPublicEnv } from "@/lib/validation/env";
+import type { Database } from "@/types/supabase";
+
+export function createSupabaseBrowserClient() {
+  const env = getPublicEnv();
+
+  return createBrowserClient<Database>(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.SUPABASE_PUBLIC_KEY,
+  );
+}

@@ -21,24 +21,24 @@ Admin
 
 ## Matrix Aksi
 
-| Aksi | Pegawai | Ketua Tim | Kepala BPS | Admin |
-| --- | --- | --- | --- | --- |
-| Membuat draft | Ya, milik sendiri | Ya, milik sendiri | Tidak | Ya |
-| Melihat draft sendiri | Ya | Ya | Tidak | Ya |
-| Melihat draft pegawai lain | Tidak | Tidak | Tidak | Ya |
-| Mengajukan ke Ketua Tim | Ya, milik sendiri | Ya, milik sendiri | Tidak | Ya |
-| Melihat antrean koreksi tim | Tidak | Ya, timnya | Tidak | Ya |
-| Selesai koreksi tahap Ketua Tim | Tidak | Ya, timnya | Tidak | Ya |
-| Menyetujui lanjut ke Kepala BPS | Tidak | Ya, timnya | Tidak | Ya |
-| Melihat antrean Kepala BPS | Tidak | Tidak | Ya | Ya |
-| Selesai koreksi tahap Kepala BPS | Tidak | Tidak | Ya | Ya |
-| Menyetujui internal | Tidak | Tidak | Ya | Ya |
-| Mengirim hasil revisi | Ya, milik sendiri | Ya, milik sendiri | Tidak | Ya |
-| Upload naskah final | Ya, milik sendiri jika disetujui | Ya, milik sendiri jika disetujui | Ya | Ya |
-| Mengisi referensi SRIKANDI | Terbatas milik sendiri jika final | Tidak | Ya | Ya |
-| Membatalkan dokumen | Ya, sebelum final | Ya, sebelum Kepala BPS untuk timnya | Ya, sebelum final | Ya |
-| Melihat audit trail | Terbatas milik sendiri | Terbatas timnya | Ya | Ya |
-| Mengelola user/role/tim | Tidak | Tidak | Tidak | Ya |
+| Aksi                             | Pegawai                           | Ketua Tim                           | Kepala BPS        | Admin |
+| -------------------------------- | --------------------------------- | ----------------------------------- | ----------------- | ----- |
+| Membuat draft                    | Ya, milik sendiri                 | Ya, milik sendiri                   | Tidak             | Ya    |
+| Melihat draft sendiri            | Ya                                | Ya                                  | Tidak             | Ya    |
+| Melihat draft pegawai lain       | Tidak                             | Tidak                               | Tidak             | Ya    |
+| Mengajukan ke Ketua Tim          | Ya, milik sendiri                 | Ya, milik sendiri                   | Tidak             | Ya    |
+| Melihat antrean koreksi tim      | Tidak                             | Ya, timnya                          | Tidak             | Ya    |
+| Selesai koreksi tahap Ketua Tim  | Tidak                             | Ya, timnya                          | Tidak             | Ya    |
+| Menyetujui lanjut ke Kepala BPS  | Tidak                             | Ya, timnya                          | Tidak             | Ya    |
+| Melihat antrean Kepala BPS       | Tidak                             | Tidak                               | Ya                | Ya    |
+| Selesai koreksi tahap Kepala BPS | Tidak                             | Tidak                               | Ya                | Ya    |
+| Menyetujui internal              | Tidak                             | Tidak                               | Ya                | Ya    |
+| Mengirim hasil revisi            | Ya, milik sendiri                 | Ya, milik sendiri                   | Tidak             | Ya    |
+| Upload naskah final              | Ya, milik sendiri jika disetujui  | Ya, milik sendiri jika disetujui    | Ya                | Ya    |
+| Mengisi referensi SRIKANDI       | Terbatas milik sendiri jika final | Tidak                               | Ya                | Ya    |
+| Membatalkan dokumen              | Ya, sebelum final                 | Ya, sebelum Kepala BPS untuk timnya | Ya, sebelum final | Ya    |
+| Melihat audit trail              | Terbatas milik sendiri            | Terbatas timnya                     | Ya                | Ya    |
+| Mengelola user/role/tim          | Tidak                             | Tidak                               | Tidak             | Ya    |
 
 ## Permission Function Yang Disarankan
 

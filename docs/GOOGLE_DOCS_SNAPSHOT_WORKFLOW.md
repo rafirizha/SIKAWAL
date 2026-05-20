@@ -96,14 +96,14 @@ Apps Script tidak boleh:
 
 ## Failure Modes dan Mitigasi
 
-| Failure | Mitigasi |
-| --- | --- |
-| Apps Script quota habis | Fallback manual upload |
-| Export DOCX tidak membawa semua komentar | Simpan `comments_json`, PDF optional |
-| Verifikator lupa klik `Selesai Koreksi` | Dashboard status tetap menunggu |
-| Google Doc berubah setelah snapshot | Snapshot lama tetap bukti resmi |
-| Reviewer tidak punya akses Google Docs | Validasi/instruksi share akses |
-| Callback ke SIKAWAL gagal | Simpan job `FAILED`, minta retry atau manual upload |
+| Failure                                  | Mitigasi                                            |
+| ---------------------------------------- | --------------------------------------------------- |
+| Apps Script quota habis                  | Fallback manual upload                              |
+| Export DOCX tidak membawa semua komentar | Simpan `comments_json`, PDF optional                |
+| Verifikator lupa klik `Selesai Koreksi`  | Dashboard status tetap menunggu                     |
+| Google Doc berubah setelah snapshot      | Snapshot lama tetap bukti resmi                     |
+| Reviewer tidak punya akses Google Docs   | Validasi/instruksi share akses                      |
+| Callback ke SIKAWAL gagal                | Simpan job `FAILED`, minta retry atau manual upload |
 
 ## Acceptance Gate
 
@@ -119,4 +119,3 @@ Sebelum fitur `Selesai Koreksi` dianggap selesai:
 [ ] Export gagal punya fallback manual
 [ ] Error message bisa dipahami user
 ```
-

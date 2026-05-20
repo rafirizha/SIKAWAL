@@ -324,16 +324,16 @@ Then sistem menampilkan urutan versi, reviewer, waktu, snapshot, dan audit log.
 
 ## 13. Risiko dan Mitigasi
 
-| Risiko | Mitigasi |
-| --- | --- |
-| Verifikator lupa menekan `Selesai Koreksi` | Dashboard menampilkan status masih menunggu, reminder/manual follow-up |
-| Google Docs berubah setelah koreksi | Snapshot saat `Selesai Koreksi` menjadi bukti resmi |
-| Export DOCX tidak membawa komentar sempurna | Simpan `comments_json`, PDF snapshot jika tersedia, fallback upload manual |
-| Apps Script gagal/quota habis | Fallback manual upload snapshot |
-| Link Google Docs salah akses | Validasi URL dan instruksi share hanya ke reviewer terkait |
-| Dokumen sensitif di cloud eksternal | Pilot hanya dummy/anonymized kecuali izin resmi |
-| Penguji bertanya "kenapa bukan Google Docs saja?" | Jawaban: Google Docs alat komentar, SIKAWAL workflow/evidence trail/status/audit |
-| Penguji bertanya "kenapa bukan SRIKANDI?" | Jawaban: SRIKANDI legal/arsip resmi, SIKAWAL pre-review internal dan bukti koreksi rinci |
+| Risiko                                            | Mitigasi                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Verifikator lupa menekan `Selesai Koreksi`        | Dashboard menampilkan status masih menunggu, reminder/manual follow-up                   |
+| Google Docs berubah setelah koreksi               | Snapshot saat `Selesai Koreksi` menjadi bukti resmi                                      |
+| Export DOCX tidak membawa komentar sempurna       | Simpan `comments_json`, PDF snapshot jika tersedia, fallback upload manual               |
+| Apps Script gagal/quota habis                     | Fallback manual upload snapshot                                                          |
+| Link Google Docs salah akses                      | Validasi URL dan instruksi share hanya ke reviewer terkait                               |
+| Dokumen sensitif di cloud eksternal               | Pilot hanya dummy/anonymized kecuali izin resmi                                          |
+| Penguji bertanya "kenapa bukan Google Docs saja?" | Jawaban: Google Docs alat komentar, SIKAWAL workflow/evidence trail/status/audit         |
+| Penguji bertanya "kenapa bukan SRIKANDI?"         | Jawaban: SRIKANDI legal/arsip resmi, SIKAWAL pre-review internal dan bukti koreksi rinci |
 
 ## 14. Open Questions
 

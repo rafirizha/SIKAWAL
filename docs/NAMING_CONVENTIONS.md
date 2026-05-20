@@ -59,7 +59,9 @@ const letterId = input.letterId;
 const currentUser = await getCurrentUser();
 
 function canSubmitLetter(user: User, letter: Letter) {
-  return user.id === letter.creatorUserId && letter.status === LETTER_STATUS.DRAFT;
+  return (
+    user.id === letter.creatorUserId && letter.status === LETTER_STATUS.DRAFT
+  );
 }
 ```
 
@@ -213,7 +215,8 @@ Contoh:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SECRET_KEY
 SUPABASE_SERVICE_ROLE_KEY
 APP_BASE_URL
 MAX_DOCX_UPLOAD_MB
