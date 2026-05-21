@@ -25,4 +25,28 @@ describe("draftLetterSchema", () => {
 
     expect(parsed.success).toBe(false);
   });
+
+  it("rejects calendar-invalid dates", () => {
+    const parsed = draftLetterSchema.safeParse({
+      subject: "Undangan rapat koordinasi",
+      recipient: "Pegawai internal",
+      letterDate: "2026-02-31",
+      googleDocUrl: "",
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("does not accept client-controlled data classification", () => {
+    const parsed = draftLetterSchema.parse({
+      subject: "Undangan rapat koordinasi",
+      recipient: "Pegawai internal",
+      letterDate: "2026-05-20",
+      googleDocUrl: "",
+      dataClassification: "production",
+      submitAfterCreate: false,
+    });
+
+    expect("dataClassification" in parsed).toBe(false);
+  });
 });

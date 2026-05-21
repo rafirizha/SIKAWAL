@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 import { isGoogleDocUrl, parseGoogleDocUrl } from "@/lib/google/google-docs";
-import { DATA_CLASSIFICATION } from "@/lib/workflow/constants";
+
+const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 const optionalGoogleDocUrlSchema = z
   .string()
@@ -11,6 +12,21 @@ const optionalGoogleDocUrlSchema = z
   .refine((value) => !value || isGoogleDocUrl(value), {
     message: "URL harus berupa link Google Docs yang valid.",
   });
+
+function isValidIsoDate(value: string) {
+  if (!isoDatePattern.test(value)) {
+    return false;
+  }
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+}
 
 export const draftLetterSchema = z.object({
   subject: z
@@ -23,16 +39,10 @@ export const draftLetterSchema = z.object({
     .trim()
     .min(2, "Tujuan minimal 2 karakter.")
     .max(180, "Tujuan maksimal 180 karakter."),
-  letterDate: z
-    .string()
-    .trim()
-    .refine((value) => !Number.isNaN(Date.parse(value)), {
-      message: "Tanggal naskah tidak valid.",
-    }),
+  letterDate: z.string().trim().refine(isValidIsoDate, {
+    message: "Tanggal naskah tidak valid.",
+  }),
   googleDocUrl: optionalGoogleDocUrlSchema,
-  dataClassification: z
-    .enum(DATA_CLASSIFICATION)
-    .default(DATA_CLASSIFICATION.DUMMY),
   submitAfterCreate: z.boolean().default(false),
 });
 

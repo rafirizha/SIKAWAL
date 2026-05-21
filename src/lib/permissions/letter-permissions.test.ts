@@ -58,6 +58,7 @@ describe("letter permissions", () => {
   it("allows employee and Kasubbag Umum to create drafts but rejects head", () => {
     expect(canCreateDraft(employee)).toBe(true);
     expect(canCreateDraft(generalSubdivisionHead)).toBe(true);
+    expect(canCreateDraft(admin)).toBe(true);
     expect(canCreateDraft(head)).toBe(false);
   });
 

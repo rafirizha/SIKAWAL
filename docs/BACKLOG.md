@@ -38,35 +38,35 @@ P2 = nice-to-have setelah MVP stabil
 
 | ID     | Prioritas | Task                                      | Acceptance                             | Dependency | Status |
 | ------ | --------- | ----------------------------------------- | -------------------------------------- | ---------- | ------ |
-| BL-001 | P0        | Setup Next.js App Router + TypeScript     | `npm run dev` berjalan                 | None       | TODO   |
-| BL-002 | P0        | Setup Tailwind CSS dan shadcn/ui baseline | Layout dasar render                    | BL-001     | TODO   |
-| BL-003 | P0        | Buat struktur folder architecture         | Folder sesuai docs/ARCHITECTURE.md     | BL-001     | TODO   |
-| BL-004 | P0        | Setup linting, formatter, typecheck       | Script check tersedia                  | BL-001     | TODO   |
-| BL-005 | P0        | Environment validation                    | Missing env error jelas                | BL-001     | TODO   |
-| BL-006 | P0        | Supabase wrappers                         | Supabase-specific code terisolasi      | BL-005     | TODO   |
-| BL-007 | P0        | Domain constants/types                    | Status/role/version constants tersedia | BL-003     | TODO   |
-| BL-008 | P0        | README setup lokal                        | Developer bisa run lokal               | BL-001     | TODO   |
+| BL-001 | P0        | Setup Next.js App Router + TypeScript     | `npm run dev` berjalan                 | None       | DONE   |
+| BL-002 | P0        | Setup Tailwind CSS dan shadcn/ui baseline | Layout dasar render                    | BL-001     | DONE   |
+| BL-003 | P0        | Buat struktur folder architecture         | Folder sesuai docs/ARCHITECTURE.md     | BL-001     | DONE   |
+| BL-004 | P0        | Setup linting, formatter, typecheck       | Script check tersedia                  | BL-001     | DONE   |
+| BL-005 | P0        | Environment validation                    | Missing env error jelas                | BL-001     | DONE   |
+| BL-006 | P0        | Supabase wrappers                         | Supabase-specific code terisolasi      | BL-005     | DONE   |
+| BL-007 | P0        | Domain constants/types                    | Status/role/version constants tersedia | BL-003     | DONE   |
+| BL-008 | P0        | README setup lokal                        | Developer bisa run lokal               | BL-001     | DONE   |
 
 ## Sprint 2: Database, Auth, Permission
 
 | ID     | Prioritas | Task                   | Acceptance                            | Dependency | Status |
 | ------ | --------- | ---------------------- | ------------------------------------- | ---------- | ------ |
-| BL-009 | P0        | Migration schema utama | Tables, FK, checks, indexes tersedia  | BL-007     | TODO   |
-| BL-010 | P0        | Seed dummy             | User/team/letter sample tersedia      | BL-009     | TODO   |
-| BL-011 | P0        | Auth session mapping   | Role aplikasi dari tabel `users`      | BL-009     | TODO   |
-| BL-012 | P0        | Permission helper      | Unit test permission dasar lewat      | BL-011     | TODO   |
-| BL-013 | P0        | Route protection       | Dashboard tidak terbuka tanpa session | BL-011     | TODO   |
+| BL-009 | P0        | Migration schema utama | Tables, FK, checks, indexes tersedia  | BL-007     | DONE   |
+| BL-010 | P0        | Seed dummy             | User/team/letter sample tersedia      | BL-009     | DONE   |
+| BL-011 | P0        | Auth session mapping   | Role aplikasi dari tabel `users`      | BL-009     | DONE   |
+| BL-012 | P0        | Permission helper      | Unit test permission dasar lewat      | BL-011     | DONE   |
+| BL-013 | P0        | Route protection       | Dashboard tidak terbuka tanpa session | BL-011     | DONE   |
 
 ## Sprint 3: Draft dan Submit
 
 | ID     | Prioritas | Task                             | Acceptance                                                         | Dependency     | Status |
 | ------ | --------- | -------------------------------- | ------------------------------------------------------------------ | -------------- | ------ |
-| BL-014 | P0        | Draft schema validation          | Input invalid ditolak jelas                                        | BL-007         | TODO   |
-| BL-015 | P0        | Google Docs URL parser/validator | Google Doc ID bisa diekstrak                                       | BL-014         | TODO   |
-| BL-016 | P0        | Upload DOCX/PDF initial document | File valid tersimpan via adapter                                   | BL-006         | TODO   |
-| BL-017 | P0        | Create draft action              | Status `Draft`, versi awal optional                                | BL-012, BL-014 | TODO   |
-| BL-018 | P0        | Submit draft to Kasubbag Umum    | Status `Menunggu Koreksi Kasubbag Umum`, versi `Draft Pengajuan 1` | BL-012, BL-017 | TODO   |
-| BL-019 | P0        | Draft form UI                    | Pegawai bisa submit draft                                          | BL-015, BL-018 | TODO   |
+| BL-014 | P0        | Draft schema validation          | Input invalid ditolak jelas                                        | BL-007         | DONE   |
+| BL-015 | P0        | Google Docs URL parser/validator | Google Doc ID bisa diekstrak                                       | BL-014         | DONE   |
+| BL-016 | P0        | Upload DOCX/PDF initial document | File valid tersimpan via adapter                                   | BL-006         | DONE   |
+| BL-017 | P0        | Create draft action              | Status `Draft`, versi awal optional                                | BL-012, BL-014 | DONE   |
+| BL-018 | P0        | Submit draft to Kasubbag Umum    | Status `Menunggu Koreksi Kasubbag Umum`, versi `Draft Pengajuan 1` | BL-012, BL-017 | DONE   |
+| BL-019 | P0        | Draft form UI                    | Pegawai bisa submit draft                                          | BL-015, BL-018 | DONE   |
 
 ## Sprint 4: Koreksi Kasubbag Umum dan Snapshot
 

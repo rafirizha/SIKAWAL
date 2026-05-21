@@ -70,7 +70,8 @@ export async function loginAction(
 
     return {
       status: "error",
-      message: `Profil SIKAWAL belum bisa dibaca: ${profileError.message}`,
+      message:
+        "User belum memiliki profil aktif di SIKAWAL. Hubungi admin untuk memastikan akun sudah dipetakan.",
     };
   }
 
@@ -80,7 +81,7 @@ export async function loginAction(
     return {
       status: "error",
       message:
-        "User belum memiliki profil aktif di SIKAWAL. Pastikan UID Auth sudah ada di tabel users.",
+        "User belum memiliki profil aktif di SIKAWAL. Hubungi admin untuk memastikan akun sudah dipetakan.",
     };
   }
 

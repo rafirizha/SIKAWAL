@@ -4,6 +4,11 @@ import type { SourceType } from "@/types/domain";
 const docxMimeType =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const pdfMimeType = "application/pdf";
+const zipMagicNumbers = [
+  [0x50, 0x4b, 0x03, 0x04],
+  [0x50, 0x4b, 0x05, 0x06],
+  [0x50, 0x4b, 0x07, 0x08],
+];
 
 export type InitialDocumentFile = {
   file: File;
@@ -51,10 +56,68 @@ function getMaxFileSizeBytes(
   return maxUploadMb * 1024 * 1024;
 }
 
-export function parseInitialDocumentFile(
+function startsWithBytes(bytes: Uint8Array, pattern: number[]) {
+  if (bytes.length < pattern.length) {
+    return false;
+  }
+
+  return pattern.every((byte, index) => bytes[index] === byte);
+}
+
+function startsWithAsciiText(bytes: Uint8Array, text: string) {
+  const pattern = Array.from(text, (character) => character.charCodeAt(0));
+
+  return startsWithBytes(bytes, pattern);
+}
+
+function containsAsciiText(bytes: Uint8Array, text: string) {
+  const pattern = Array.from(text, (character) => character.charCodeAt(0));
+
+  if (bytes.length < pattern.length) {
+    return false;
+  }
+
+  return bytes.some((_, startIndex) => {
+    if (startIndex + pattern.length > bytes.length) {
+      return false;
+    }
+
+    return pattern.every(
+      (byte, patternIndex) => bytes[startIndex + patternIndex] === byte,
+    );
+  });
+}
+
+function hasZipMagicNumber(bytes: Uint8Array) {
+  return zipMagicNumbers.some((magicNumber) =>
+    startsWithBytes(bytes, magicNumber),
+  );
+}
+
+async function assertFileSignature(file: File, sourceType: SourceType) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+
+  if (sourceType === SOURCE_TYPE.UPLOAD_PDF) {
+    if (!startsWithAsciiText(bytes, "%PDF-")) {
+      throw new Error("Dokumen PDF tidak valid atau rusak.");
+    }
+
+    return;
+  }
+
+  if (
+    !hasZipMagicNumber(bytes) ||
+    !containsAsciiText(bytes, "[Content_Types].xml") ||
+    !containsAsciiText(bytes, "word/document.xml")
+  ) {
+    throw new Error("Dokumen DOCX tidak valid atau rusak.");
+  }
+}
+
+export async function parseInitialDocumentFile(
   value: FormDataEntryValue | null,
   limits: InitialDocumentLimits,
-): InitialDocumentFile | null {
+): Promise<InitialDocumentFile | null> {
   if (!isFileLike(value)) {
     return null;
   }
@@ -68,6 +131,8 @@ export function parseInitialDocumentFile(
   if (value.size > getMaxFileSizeBytes(sourceType, limits)) {
     throw new Error("Ukuran dokumen awal melebihi batas upload.");
   }
+
+  await assertFileSignature(value, sourceType);
 
   return {
     file: value,
