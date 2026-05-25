@@ -69,13 +69,29 @@ Jika hanya ada Google Docs URL tanpa file atau comments JSON, itu belum cukup se
 
 ## Apps Script Bridge
 
+Panduan setup teknis ada di `docs/GOOGLE_APPS_SCRIPT_SETUP.md`.
+
 Apps Script boleh digunakan untuk:
 
 - Menerima request export dari SIKAWAL.
 - Membaca Google Docs/Drive sesuai permission.
 - Export Google Docs ke DOCX/PDF.
 - Mengambil komentar/reply jika API dan permission memungkinkan.
-- Mengirim hasil ke endpoint SIKAWAL atau mengembalikan payload download.
+- Mengembalikan payload export ke action SIKAWAL.
+
+Response bridge yang diterima SIKAWAL:
+
+```text
+ok
+status
+errorMessage
+fallbackReason
+exportedAt
+snapshot/docx/pdf: { fileName, mimeType, base64 }
+commentsJson
+```
+
+`commentsJson` hanya dianggap evidence jika berisi data non-empty. Object/array kosong bukan bukti koreksi.
 
 Apps Script tidak boleh:
 
@@ -90,7 +106,9 @@ Apps Script tidak boleh:
 - Jangan memakai public link untuk dokumen sensitif.
 - Reviewer harus diberi akses sesuai kebutuhan.
 - Apps Script URL disimpan di environment variable.
-- Jika memakai shared secret/API key untuk callback, simpan di server env.
+- Request dari SIKAWAL ke Apps Script wajib memakai shared secret di server env.
+- Shared secret dikirim di body request sebagai `shared_secret`; header `x-sikawal-bridge-secret` tetap dikirim sebagai defense tambahan, tetapi script memvalidasi dari body agar kompatibel dengan Apps Script Web App.
+- Request export wajib memiliki timeout agar fallback manual tetap responsif.
 - Jangan log isi dokumen sensitif ke console.
 - Pilot cloud eksternal memakai dummy/anonymized data.
 
@@ -110,12 +128,12 @@ Apps Script tidak boleh:
 Sebelum fitur `Selesai Koreksi` dianggap selesai:
 
 ```text
-[ ] Permission reviewer dicek server-side
-[ ] Status transition valid
-[ ] Evidence minimal dipenuhi
-[ ] Version Draft Dikoreksi dibuat
-[ ] Versi lama tidak ditimpa
-[ ] Audit log dibuat
-[ ] Export gagal punya fallback manual
-[ ] Error message bisa dipahami user
+[x] Permission reviewer dicek server-side
+[x] Status transition valid
+[x] Evidence minimal dipenuhi
+[x] Version Draft Dikoreksi dibuat
+[x] Versi lama tidak ditimpa
+[x] Audit log dibuat
+[x] Export gagal punya fallback manual
+[x] Error message bisa dipahami user
 ```

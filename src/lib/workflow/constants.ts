@@ -53,3 +53,8 @@ export const GOOGLE_INTEGRATION_MODE = {
   MANUAL: "manual",
   APPS_SCRIPT: "apps_script",
 } as const;
+
+export const GENERAL_SUBDIVISION_CORRECTION_DECISION = {
+  REQUEST_REVISION: "request_revision",
+  FORWARD_TO_HEAD: "forward_to_head",
+} as const;

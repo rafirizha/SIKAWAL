@@ -1,6 +1,7 @@
 import {
   APPROVAL_ACTION,
   DATA_CLASSIFICATION,
+  GENERAL_SUBDIVISION_CORRECTION_DECISION,
   LETTER_STATUS,
   SOURCE_TYPE,
   USER_ROLE,
@@ -15,6 +16,9 @@ export type VersionType = ValueOf<typeof VERSION_TYPE>;
 export type SourceType = ValueOf<typeof SOURCE_TYPE>;
 export type ApprovalAction = ValueOf<typeof APPROVAL_ACTION>;
 export type DataClassification = ValueOf<typeof DATA_CLASSIFICATION>;
+export type GeneralSubdivisionCorrectionDecision = ValueOf<
+  typeof GENERAL_SUBDIVISION_CORRECTION_DECISION
+>;
 
 export type DomainUser = {
   id: string;

@@ -23,6 +23,12 @@ export const serverEnvSchema = publicEnvSchema.extend({
   STORAGE_PROVIDER: z.enum(["supabase", "internal", "s3"]).default("supabase"),
   LETTER_DOCUMENTS_BUCKET: z.string().min(1).default("letter-documents"),
   GOOGLE_APPS_SCRIPT_EXPORT_URL: optionalUrlSchema,
+  GOOGLE_APPS_SCRIPT_SHARED_SECRET: optionalSecretSchema,
+  GOOGLE_APPS_SCRIPT_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(10_000),
   GOOGLE_INTEGRATION_MODE: z.enum(["manual", "apps_script"]).default("manual"),
 });
 

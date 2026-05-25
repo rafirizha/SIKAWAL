@@ -12,6 +12,14 @@ Database utama MVP adalah Supabase Postgres. Schema harus ditulis sebagai migrat
 - Simpan snapshot/version sebagai immutable secara aplikasi dan constraint jika memungkinkan.
 - Jangan bergantung pada fitur non-PostgreSQL untuk logic inti.
 
+## RLS Policy Posture
+
+- RLS wajib aktif pada tabel public.
+- Tabel workflow utama (`letters`, `letter_versions`, `correction_snapshot_jobs`, `approvals`, `audit_logs`) tidak dibuka langsung ke client. Akses perubahan workflow harus lewat server action/RPC yang mengecek permission, status transition, versioning, snapshot evidence, dan audit log.
+- Policy `server only deny direct access` dipakai sebagai default deny untuk tabel workflow agar tidak ada akses langsung dari `anon` atau `authenticated`.
+- Tabel `users` boleh dibaca oleh user login untuk profil dirinya sendiri memakai policy `using ((select auth.uid()) = id)`.
+- Tabel `teams` boleh dibaca oleh user login untuk kebutuhan pemetaan tim.
+
 ## Tables
 
 ### users
@@ -275,6 +283,28 @@ Gunakan transaksi database untuk:
 - Mengisi/mengubah referensi SRIKANDI.
 
 File export/upload dilakukan sebelum transaksi DB dianggap final. Jika DB gagal, lakukan cleanup storage best-effort.
+
+## Workflow RPC
+
+Operasi status penting dijalankan lewat PostgreSQL function agar perubahan versi, status, approval, dan audit tetap atomik.
+
+```text
+create_draft_letter
+create_and_submit_draft_letter
+submit_draft_to_general_subdivision
+complete_general_subdivision_correction
+submit_letter_revision
+complete_head_correction
+approve_internal_letter
+```
+
+`complete_general_subdivision_correction` menerima evidence `storage_path` snapshot atau `comments_json`. Jika `source_type` adalah `manual_snapshot_upload`, file snapshot tetap wajib dan harus punya MIME DOCX/PDF, ukuran, serta checksum. Jika `source_type` adalah `apps_script_export`, `comments_json` dapat menjadi evidence minimal saat file export tidak tersedia, tetapi tidak boleh kosong. Jika export otomatis memakai `correction_snapshot_jobs`, status job diselesaikan dalam transaksi RPC yang sama.
+
+`submit_letter_revision` membuat versi `Hasil Revisi` secara append-only, mewajibkan `change_summary`, lalu mengembalikan status ke reviewer target (`Kasubbag Umum` atau `Kepala BPS`).
+
+`complete_head_correction` mengikuti aturan snapshot yang sama dengan koreksi Kasubbag Umum, tetapi reviewer role dikunci sebagai `Kepala BPS` dan status berikutnya menjadi `Perlu Revisi Pegawai`.
+
+`approve_internal_letter` hanya mengubah status dari `Menunggu Koreksi Kepala BPS` ke `Disetujui Internal` dan tetap mencatat approval serta audit log tanpa membuat versi dokumen baru.
 
 ## Migration Notes
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  canApproveInternal,
   canCompleteHeadCorrection,
   canCompleteGeneralSubdivisionCorrection,
   canCreateDraft,
@@ -31,6 +32,20 @@ const generalSubdivisionHead: PermissionUser = {
   id: "general-subdivision-head-1",
   role: USER_ROLE.GENERAL_SUBDIVISION_HEAD,
   teamId: "team-1",
+  isActive: true,
+};
+
+const otherGeneralSubdivisionHead: PermissionUser = {
+  id: "general-subdivision-head-2",
+  role: USER_ROLE.GENERAL_SUBDIVISION_HEAD,
+  teamId: "team-2",
+  isActive: true,
+};
+
+const unassignedGeneralSubdivisionHead: PermissionUser = {
+  id: "general-subdivision-head-3",
+  role: USER_ROLE.GENERAL_SUBDIVISION_HEAD,
+  teamId: null,
   isActive: true,
 };
 
@@ -87,9 +102,30 @@ describe("letter permissions", () => {
         waitingLetter,
       ),
     ).toBe(true);
+    expect(
+      canCompleteGeneralSubdivisionCorrection(
+        otherGeneralSubdivisionHead,
+        waitingLetter,
+      ),
+    ).toBe(false);
+    expect(
+      canCompleteGeneralSubdivisionCorrection(
+        unassignedGeneralSubdivisionHead,
+        waitingLetter,
+      ),
+    ).toBe(false);
     expect(canCompleteGeneralSubdivisionCorrection(head, waitingLetter)).toBe(
       false,
     );
+    expect(canCompleteGeneralSubdivisionCorrection(admin, waitingLetter)).toBe(
+      true,
+    );
+    expect(
+      canCompleteGeneralSubdivisionCorrection(
+        generalSubdivisionHead,
+        draftLetter,
+      ),
+    ).toBe(false);
   });
 
   it("allows head correction only at head review stage", () => {
@@ -102,6 +138,18 @@ describe("letter permissions", () => {
     expect(canCompleteHeadCorrection(generalSubdivisionHead, headLetter)).toBe(
       false,
     );
+  });
+
+  it("allows internal approval only at head review stage", () => {
+    const headLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.WAITING_HEAD_CORRECTION,
+    };
+
+    expect(canApproveInternal(head, headLetter)).toBe(true);
+    expect(canApproveInternal(admin, headLetter)).toBe(true);
+    expect(canApproveInternal(generalSubdivisionHead, headLetter)).toBe(false);
+    expect(canApproveInternal(head, draftLetter)).toBe(false);
   });
 
   it("allows creator to submit revision only when revision is required", () => {

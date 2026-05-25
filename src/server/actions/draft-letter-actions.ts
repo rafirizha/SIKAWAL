@@ -234,6 +234,7 @@ export async function createDraftLetterAction(
         letterId,
         versionNumber: 1,
         file: initialDocument.file,
+        sourceType: initialDocument.sourceType,
       });
     }
 

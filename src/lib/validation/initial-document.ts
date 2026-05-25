@@ -114,9 +114,10 @@ async function assertFileSignature(file: File, sourceType: SourceType) {
   }
 }
 
-export async function parseInitialDocumentFile(
+async function parseDocumentFile(
   value: FormDataEntryValue | null,
   limits: InitialDocumentLimits,
+  documentLabel: string,
 ): Promise<InitialDocumentFile | null> {
   if (!isFileLike(value)) {
     return null;
@@ -125,11 +126,13 @@ export async function parseInitialDocumentFile(
   const sourceType = getSourceType(value);
 
   if (!sourceType) {
-    throw new Error("Dokumen awal harus berformat DOCX atau PDF.");
+    throw new Error(`${documentLabel} harus berformat DOCX atau PDF.`);
   }
 
   if (value.size > getMaxFileSizeBytes(sourceType, limits)) {
-    throw new Error("Ukuran dokumen awal melebihi batas upload.");
+    throw new Error(
+      `Ukuran ${documentLabel.toLowerCase()} melebihi batas upload.`,
+    );
   }
 
   await assertFileSignature(value, sourceType);
@@ -138,4 +141,18 @@ export async function parseInitialDocumentFile(
     file: value,
     sourceType,
   };
+}
+
+export async function parseInitialDocumentFile(
+  value: FormDataEntryValue | null,
+  limits: InitialDocumentLimits,
+): Promise<InitialDocumentFile | null> {
+  return parseDocumentFile(value, limits, "Dokumen awal");
+}
+
+export async function parseCorrectionSnapshotFile(
+  value: FormDataEntryValue | null,
+  limits: InitialDocumentLimits,
+): Promise<InitialDocumentFile | null> {
+  return parseDocumentFile(value, limits, "Snapshot koreksi");
 }

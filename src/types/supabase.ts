@@ -290,6 +290,77 @@ export type Database = {
           version_id: string | null;
         }[];
       };
+      complete_general_subdivision_correction: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_decision: string;
+          input_storage_path?: string | null;
+          input_file_url?: string | null;
+          input_file_mime_type?: string | null;
+          input_file_size_bytes?: number | null;
+          input_checksum_sha256?: string | null;
+          input_notes?: string | null;
+          input_source_type?: string | null;
+          input_comments_json?: Json | null;
+          input_exported_at?: string | null;
+          input_snapshot_job_id?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string;
+        }[];
+      };
+      submit_letter_revision: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_google_doc_id?: string | null;
+          input_google_doc_url?: string | null;
+          input_storage_path?: string | null;
+          input_file_url?: string | null;
+          input_file_mime_type?: string | null;
+          input_file_size_bytes?: number | null;
+          input_checksum_sha256?: string | null;
+          input_source_type?: string | null;
+          input_change_summary?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string;
+        }[];
+      };
+      complete_head_correction: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_storage_path?: string | null;
+          input_file_url?: string | null;
+          input_file_mime_type?: string | null;
+          input_file_size_bytes?: number | null;
+          input_checksum_sha256?: string | null;
+          input_notes?: string | null;
+          input_source_type?: string | null;
+          input_comments_json?: Json | null;
+          input_exported_at?: string | null;
+          input_snapshot_job_id?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string;
+        }[];
+      };
+      approve_internal_letter: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_notes?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string;
+        }[];
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

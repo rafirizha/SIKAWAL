@@ -2,6 +2,8 @@ import "server-only";
 
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service-role-client";
 import { getServerEnv } from "@/lib/validation/env";
+import { SOURCE_TYPE } from "@/lib/workflow/constants";
+import type { SourceType } from "@/types/domain";
 
 export type UploadedLetterDocument = {
   storagePath: string;
@@ -14,6 +16,15 @@ type UploadLetterDocumentInput = {
   letterId: string;
   versionNumber: number;
   file: File;
+  sourceType?: SourceType;
+};
+
+type UploadCorrectionSnapshotInput = {
+  letterId: string;
+  revisionRound: number;
+  file: File;
+  sourceType?: SourceType;
+  fileMimeType?: string;
 };
 
 function sanitizeFileName(fileName: string) {
@@ -35,36 +46,90 @@ async function createSha256Hex(buffer: ArrayBuffer) {
   return hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export async function uploadLetterDocument({
-  letterId,
-  versionNumber,
+async function uploadDocumentToStorage({
+  errorPrefix,
   file,
-}: UploadLetterDocumentInput): Promise<UploadedLetterDocument> {
+  fileMimeType,
+  storagePath,
+}: {
+  errorPrefix: string;
+  file: File;
+  fileMimeType?: string;
+  storagePath: string;
+}): Promise<UploadedLetterDocument> {
   const env = getServerEnv();
   const supabase = createSupabaseServiceRoleClient();
   const arrayBuffer = await file.arrayBuffer();
   const checksumSha256 = await createSha256Hex(arrayBuffer);
-  const sanitizedFileName =
-    sanitizeFileName(file.name) || `document.${getFileExtension(file.name)}`;
-  const storagePath = `letters/${letterId}/versions/${versionNumber}/${Date.now()}-${sanitizedFileName}`;
+  const resolvedFileMimeType =
+    fileMimeType || file.type || "application/octet-stream";
 
   const { error } = await supabase.storage
     .from(env.LETTER_DOCUMENTS_BUCKET)
     .upload(storagePath, arrayBuffer, {
-      contentType: file.type || "application/octet-stream",
+      contentType: resolvedFileMimeType,
       upsert: false,
     });
 
   if (error) {
-    throw new Error(`Upload dokumen awal gagal: ${error.message}`);
+    throw new Error(`${errorPrefix}: ${error.message}`);
   }
 
   return {
     storagePath,
-    fileMimeType: file.type || "application/octet-stream",
+    fileMimeType: resolvedFileMimeType,
     fileSizeBytes: file.size,
     checksumSha256,
   };
+}
+
+function getMimeTypeFromSourceType(sourceType?: SourceType) {
+  if (sourceType === SOURCE_TYPE.UPLOAD_DOCX) {
+    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  }
+
+  if (sourceType === SOURCE_TYPE.UPLOAD_PDF) {
+    return "application/pdf";
+  }
+
+  return undefined;
+}
+
+export async function uploadLetterDocument({
+  letterId,
+  versionNumber,
+  file,
+  sourceType,
+}: UploadLetterDocumentInput): Promise<UploadedLetterDocument> {
+  const sanitizedFileName =
+    sanitizeFileName(file.name) || `document.${getFileExtension(file.name)}`;
+  const storagePath = `letters/${letterId}/versions/${versionNumber}/${Date.now()}-${crypto.randomUUID()}-${sanitizedFileName}`;
+
+  return uploadDocumentToStorage({
+    errorPrefix: "Upload dokumen awal gagal",
+    file,
+    fileMimeType: getMimeTypeFromSourceType(sourceType),
+    storagePath,
+  });
+}
+
+export async function uploadCorrectionSnapshot({
+  letterId,
+  revisionRound,
+  file,
+  fileMimeType,
+  sourceType,
+}: UploadCorrectionSnapshotInput): Promise<UploadedLetterDocument> {
+  const sanitizedFileName =
+    sanitizeFileName(file.name) || `snapshot.${getFileExtension(file.name)}`;
+  const storagePath = `letters/${letterId}/snapshots/${revisionRound}/${Date.now()}-${crypto.randomUUID()}-${sanitizedFileName}`;
+
+  return uploadDocumentToStorage({
+    errorPrefix: "Upload snapshot koreksi gagal",
+    file,
+    fileMimeType: fileMimeType ?? getMimeTypeFromSourceType(sourceType),
+    storagePath,
+  });
 }
 
 export async function deleteTemporaryUpload(storagePath: string) {

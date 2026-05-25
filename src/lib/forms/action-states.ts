@@ -19,3 +19,15 @@ export const initialDraftActionState: DraftActionState = {
   status: "idle",
   message: "",
 };
+
+export type CorrectionActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+  letterId?: string;
+  fieldErrors?: Record<string, string[] | undefined>;
+};
+
+export const initialCorrectionActionState: CorrectionActionState = {
+  status: "idle",
+  message: "",
+};

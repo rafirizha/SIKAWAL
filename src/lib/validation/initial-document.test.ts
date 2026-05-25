@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { parseInitialDocumentFile } from "@/lib/validation/initial-document";
+import {
+  parseCorrectionSnapshotFile,
+  parseInitialDocumentFile,
+} from "@/lib/validation/initial-document";
 import { SOURCE_TYPE } from "@/lib/workflow/constants";
 
 const docxMimeType =
@@ -54,5 +57,26 @@ describe("parseInitialDocumentFile", () => {
         uploadLimits,
       ),
     ).rejects.toThrow("Dokumen DOCX tidak valid");
+  });
+});
+
+describe("parseCorrectionSnapshotFile", () => {
+  it("accepts a valid PDF snapshot", async () => {
+    const parsed = await parseCorrectionSnapshotFile(
+      createPdfFile("%PDF-1.7\nsnapshot"),
+      uploadLimits,
+    );
+
+    expect(parsed?.sourceType).toBe(SOURCE_TYPE.UPLOAD_PDF);
+  });
+
+  it("uses snapshot wording for unsupported files", async () => {
+    const invalidFile = new File(["plain text"], "snapshot.txt", {
+      type: "text/plain",
+    });
+
+    await expect(
+      parseCorrectionSnapshotFile(invalidFile, uploadLimits),
+    ).rejects.toThrow("Snapshot koreksi harus berformat DOCX atau PDF.");
   });
 });

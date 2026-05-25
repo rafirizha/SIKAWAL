@@ -1,8 +1,8 @@
 # Backlog MVP
 
-Project: SIKAWAL  
-Tanggal update: 20 Mei 2026  
-Target usable MVP build: 18 Juni 2026  
+Project: SIKAWAL
+Tanggal update: 21 Mei 2026
+Target usable MVP build: 18 Juni 2026
 Target pilot testing: 1 Juli 2026
 
 Backlog ini menerjemahkan PRD v1.1 menjadi pekerjaan implementasi untuk internal correction workflow, snapshot, version history, dan audit trail.
@@ -72,21 +72,21 @@ P2 = nice-to-have setelah MVP stabil
 
 | ID     | Prioritas | Task                          | Acceptance                                               | Dependency     | Status |
 | ------ | --------- | ----------------------------- | -------------------------------------------------------- | -------------- | ------ |
-| BL-020 | P0        | Kasubbag Umum dashboard query | Kasubbag Umum hanya melihat timnya                       | BL-012, BL-018 | TODO   |
-| BL-021 | P0        | Open Google Docs action/link  | Reviewer bisa buka dokumen kerja                         | BL-015, BL-020 | TODO   |
-| BL-022 | P0        | Manual snapshot upload        | Reviewer bisa upload DOCX/PDF koreksi                    | BL-016         | TODO   |
-| BL-023 | P0        | Complete correction action    | Membuat `Draft Dikoreksi 1`, audit, status revisi/lanjut | BL-012, BL-022 | TODO   |
-| BL-024 | P1        | Apps Script export bridge POC | Export snapshot otomatis berhasil atau fallback jelas    | BL-023         | TODO   |
-| BL-025 | P1        | comments_json capture POC     | Komentar tersimpan jika API memungkinkan                 | BL-024         | TODO   |
+| BL-020 | P0        | Kasubbag Umum dashboard query | Kasubbag Umum hanya melihat timnya                       | BL-012, BL-018 | DONE   |
+| BL-021 | P0        | Open Google Docs action/link  | Reviewer bisa buka dokumen kerja                         | BL-015, BL-020 | DONE   |
+| BL-022 | P0        | Manual snapshot upload        | Reviewer bisa upload DOCX/PDF koreksi                    | BL-016         | DONE   |
+| BL-023 | P0        | Complete correction action    | Membuat `Draft Dikoreksi 1`, audit, status revisi/lanjut | BL-012, BL-022 | DONE   |
+| BL-024 | P1        | Apps Script export bridge POC | Export snapshot otomatis berhasil atau fallback jelas    | BL-023         | DONE   |
+| BL-025 | P1        | comments_json capture POC     | Komentar tersimpan jika API memungkinkan                 | BL-024         | DONE   |
 
 ## Sprint 5: Revisi dan Kepala BPS
 
 | ID     | Prioritas | Task                            | Acceptance                               | Dependency     | Status |
 | ------ | --------- | ------------------------------- | ---------------------------------------- | -------------- | ------ |
-| BL-026 | P0        | Submit revision action          | `Hasil Revisi 1`, `change_summary` wajib | BL-023         | TODO   |
-| BL-027 | P0        | Head dashboard query            | Kepala BPS melihat antrean valid         | BL-026         | TODO   |
-| BL-028 | P0        | Complete Head correction action | Membuat snapshot koreksi Kepala BPS      | BL-027         | TODO   |
-| BL-029 | P0        | Approve internal action         | Status `Disetujui Internal`, audit log   | BL-027         | TODO   |
+| BL-026 | P0        | Submit revision action          | `Hasil Revisi 1`, `change_summary` wajib | BL-023         | DONE   |
+| BL-027 | P0        | Head dashboard query            | Kepala BPS melihat antrean valid         | BL-026         | DONE   |
+| BL-028 | P0        | Complete Head correction action | Membuat snapshot koreksi Kepala BPS      | BL-027         | DONE   |
+| BL-029 | P0        | Approve internal action         | Status `Disetujui Internal`, audit log   | BL-027         | DONE   |
 | BL-030 | P1        | Review UI pages                 | Reviewer bisa koreksi/revisi/setuju      | BL-023, BL-029 | TODO   |
 
 ## Sprint 6: Final, SRIKANDI Reference, Audit
