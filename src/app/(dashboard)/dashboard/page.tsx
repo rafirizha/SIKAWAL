@@ -5,13 +5,16 @@ import { Plus } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/features/auth/components/logout-button";
+import { EmployeeStatusTable } from "@/features/letters/components/employee-status-table";
 import { FinalizationQueue } from "@/features/letters/components/finalization-queue";
 import { GeneralSubdivisionQueue } from "@/features/letters/components/general-subdivision-queue";
 import { HeadCorrectionQueue } from "@/features/letters/components/head-correction-queue";
+import { PilotUserGuide } from "@/features/letters/components/pilot-user-guide";
 import { EmptyWorkflowState } from "@/features/letters/components/review-workflow-ui";
 import { RevisionQueue } from "@/features/letters/components/revision-queue";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canCreateDraft } from "@/lib/permissions/letter-permissions";
+import { getEmployeeStatusItems } from "@/server/queries/employee-status-queries";
 import { getFinalizationQueue } from "@/server/queries/finalization-queries";
 import { getGeneralSubdivisionCorrectionQueue } from "@/server/queries/general-subdivision-correction-queries";
 import {
@@ -31,11 +34,13 @@ export default async function DashboardPage() {
     revisionQueue,
     headCorrectionQueue,
     finalizationQueue,
+    employeeStatusItems,
   ] = await Promise.all([
     getGeneralSubdivisionCorrectionQueue(currentUser),
     getRevisionQueue(currentUser),
     getHeadCorrectionQueue(currentUser),
     getFinalizationQueue(currentUser),
+    getEmployeeStatusItems(currentUser),
   ]);
   const activeReviewCount =
     generalSubdivisionQueue.length +
@@ -93,6 +98,9 @@ export default async function DashboardPage() {
             <FinalizationQueue items={finalizationQueue} />
           </>
         )}
+
+        <EmployeeStatusTable items={employeeStatusItems} />
+        <PilotUserGuide />
       </main>
     </AppShell>
   );

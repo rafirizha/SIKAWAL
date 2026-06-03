@@ -98,8 +98,8 @@ P2 = nice-to-have setelah MVP stabil
 | BL-033 | P0        | Letter detail timeline        | Semua versi dan snapshot terlihat                                  | BL-018, BL-031 | DONE   |
 | BL-034 | P0        | Audit log viewer              | Audit terbatas sesuai permission                                   | BL-012         | DONE   |
 | BL-035 | P0        | Cancel action                 | Batal sebelum final sesuai permission                              | BL-012         | DONE   |
-| BL-036 | P1        | Dashboard status table/search | Pegawai melihat tabel status dokumen dan search perihal/status/tim | BL-033         | TODO   |
-| BL-037 | P1        | User guide pilot              | Instruksi Pegawai/Reviewer/Admin                                   | BL-033         | TODO   |
+| BL-036 | P1        | Dashboard status table/search | Pegawai melihat tabel status dokumen dan search perihal/status/tim | BL-033         | DONE   |
+| BL-037 | P1        | User guide pilot              | Instruksi Pegawai/Reviewer/Admin                                   | BL-033         | DONE   |
 
 ## Testing dan Hardening
 

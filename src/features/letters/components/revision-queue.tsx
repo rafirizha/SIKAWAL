@@ -29,7 +29,7 @@ function RevisionForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
     <form action={formAction} className="flex flex-col gap-4 border-t pt-4">
       <input name="letterId" type="hidden" value={letter.id} />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-2">
           <label
             className="text-sm font-medium"
@@ -61,7 +61,7 @@ function RevisionForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
           name="revisionDocument"
         />
 
-        <div className="flex min-w-0 flex-col gap-2 md:col-span-2">
+        <div className="flex min-w-0 flex-col gap-2 lg:col-span-2">
           <label
             className="text-sm font-medium"
             htmlFor={`changeSummary-${letter.id}`}

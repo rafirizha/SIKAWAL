@@ -115,14 +115,14 @@ export function SubmitButton({
 
 export function QueueHeader({ count, description, title }: QueueHeaderProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <h2 className="break-words text-lg font-semibold">{title}</h2>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
           {description}
         </p>
       </div>
-      <span className="inline-flex w-fit items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+      <span className="inline-flex w-fit shrink-0 items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
         {count} dokumen
       </span>
     </div>
@@ -167,20 +167,20 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
 }: LetterSummaryProps<TLetter>) {
   return (
     <>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <p className="min-w-0 break-words text-sm font-medium text-muted-foreground">
               {letter.teamName}
             </p>
-            <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+            <span className="max-w-full rounded-md bg-muted px-2 py-1 text-xs font-medium leading-5 text-muted-foreground">
               {letter.status}
             </span>
           </div>
           <h3 className="mt-2 break-words text-xl font-semibold leading-7">
             {letter.subject}
           </h3>
-          <dl className="mt-4 grid gap-x-6 gap-y-3 text-sm text-muted-foreground sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-4 grid gap-x-6 gap-y-4 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
             <div className="min-w-0">
               <dt className="font-medium text-foreground">Penyusun</dt>
               <dd className="mt-1 break-words">{letter.creatorName}</dd>
@@ -189,19 +189,23 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
               <dt className="font-medium text-foreground">Tujuan</dt>
               <dd className="mt-1 break-words">{letter.recipient}</dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="font-medium text-foreground">Tanggal Naskah</dt>
-              <dd className="mt-1">{formatDate(letter.letterDate)}</dd>
+              <dd className="mt-1 break-words">
+                {formatDate(letter.letterDate)}
+              </dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="font-medium text-foreground">Update</dt>
-              <dd className="mt-1">{formatDateTime(letter.updatedAt)}</dd>
+              <dd className="mt-1 break-words">
+                {formatDateTime(letter.updatedAt)}
+              </dd>
             </div>
           </dl>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <span className="rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
+        <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:max-w-sm xl:justify-end">
+          <span className="shrink-0 rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
             {roundLabel}
           </span>
           <Button asChild size="sm" variant="outline">
@@ -231,12 +235,12 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
               </a>
             </Button>
           ) : !letter.storedDocumentUrl ? (
-            <span className="rounded-md border px-3 py-2 text-sm text-muted-foreground">
+            <span className="max-w-full rounded-md border px-3 py-2 text-sm leading-5 text-muted-foreground">
               Dokumen kerja kosong
             </span>
           ) : null}
           {letter.storedDocumentMeta ? (
-            <span className="w-full text-right text-xs leading-5 text-muted-foreground">
+            <span className="w-full break-words text-left text-xs leading-5 text-muted-foreground xl:text-right">
               {letter.storedDocumentMeta}
             </span>
           ) : null}

@@ -34,7 +34,7 @@ function CorrectionForm({
     <form action={formAction} className="flex flex-col gap-4 border-t pt-4">
       <input name="letterId" type="hidden" value={letter.id} />
 
-      <div className="grid gap-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="flex flex-col gap-2">
           <label
             className="text-sm font-medium"
@@ -79,7 +79,7 @@ function CorrectionForm({
           name="snapshotDocument"
         />
 
-        <div className="flex flex-col gap-2 md:col-span-2">
+        <div className="flex flex-col gap-2 lg:col-span-2">
           <label className="text-sm font-medium" htmlFor={`notes-${letter.id}`}>
             Catatan
           </label>
