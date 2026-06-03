@@ -4,10 +4,11 @@ import {
   canApproveInternal,
   canCompleteHeadCorrection,
   canCompleteGeneralSubdivisionCorrection,
+  canCancelLetter,
   canCreateDraft,
+  canCreateFinalVersion,
   canSubmitDraft,
   canSubmitRevision,
-  canUpdateSrikandiReference,
   canViewLetter,
   type PermissionLetter,
   type PermissionUser,
@@ -82,6 +83,15 @@ describe("letter permissions", () => {
     expect(canViewLetter(otherEmployee, draftLetter)).toBe(false);
     expect(canViewLetter(generalSubdivisionHead, draftLetter)).toBe(false);
     expect(canViewLetter(admin, draftLetter)).toBe(true);
+  });
+
+  it("allows head to view canceled documents for audit trace", () => {
+    const canceledLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.CANCELED,
+    };
+
+    expect(canViewLetter(head, canceledLetter)).toBe(true);
   });
 
   it("allows only owner or admin to submit a draft", () => {
@@ -162,25 +172,52 @@ describe("letter permissions", () => {
     expect(canSubmitRevision(employee, draftLetter)).toBe(false);
   });
 
-  it("allows SRIKANDI reference only after final", () => {
+  it("allows final version only after internal approval", () => {
+    const approvedLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.INTERNALLY_APPROVED,
+    };
+
+    expect(canCreateFinalVersion(employee, approvedLetter)).toBe(true);
+    expect(canCreateFinalVersion(head, approvedLetter)).toBe(true);
+    expect(canCreateFinalVersion(admin, approvedLetter)).toBe(true);
+    expect(canCreateFinalVersion(otherEmployee, approvedLetter)).toBe(false);
+    expect(canCreateFinalVersion(employee, draftLetter)).toBe(false);
+  });
+
+  it("allows cancel before final according to role scope", () => {
+    const generalSubdivisionLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
+    };
+    const headLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.WAITING_HEAD_CORRECTION,
+    };
+    const approvedLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.INTERNALLY_APPROVED,
+    };
     const finalLetter = {
       ...draftLetter,
       status: LETTER_STATUS.FINAL,
     };
-    const generalSubdivisionOwnedFinalLetter = {
-      ...finalLetter,
-      creatorUserId: generalSubdivisionHead.id,
+    const canceledLetter = {
+      ...draftLetter,
+      status: LETTER_STATUS.CANCELED,
     };
 
-    expect(canUpdateSrikandiReference(employee, finalLetter)).toBe(true);
+    expect(canCancelLetter(employee, approvedLetter)).toBe(true);
     expect(
-      canUpdateSrikandiReference(
-        generalSubdivisionHead,
-        generalSubdivisionOwnedFinalLetter,
-      ),
+      canCancelLetter(generalSubdivisionHead, generalSubdivisionLetter),
+    ).toBe(true);
+    expect(
+      canCancelLetter(otherGeneralSubdivisionHead, generalSubdivisionLetter),
     ).toBe(false);
-    expect(canUpdateSrikandiReference(head, finalLetter)).toBe(true);
-    expect(canUpdateSrikandiReference(admin, finalLetter)).toBe(true);
-    expect(canUpdateSrikandiReference(employee, draftLetter)).toBe(false);
+    expect(canCancelLetter(head, headLetter)).toBe(true);
+    expect(canCancelLetter(head, approvedLetter)).toBe(true);
+    expect(canCancelLetter(admin, approvedLetter)).toBe(true);
+    expect(canCancelLetter(employee, finalLetter)).toBe(false);
+    expect(canCancelLetter(admin, canceledLetter)).toBe(false);
   });
 });

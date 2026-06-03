@@ -17,6 +17,7 @@ import { parseCorrectionSnapshotFile } from "@/lib/validation/initial-document";
 import { getServerEnv } from "@/lib/validation/env";
 import {
   GOOGLE_INTEGRATION_MODE,
+  GENERAL_SUBDIVISION_CORRECTION_DECISION,
   LETTER_STATUS,
   SOURCE_TYPE,
   USER_ROLE,
@@ -160,6 +161,9 @@ export async function completeGeneralSubdivisionCorrectionAction(
     }
 
     const env = getServerEnv();
+    const requiresSnapshot =
+      parsedInput.data.correctionDecision ===
+      GENERAL_SUBDIVISION_CORRECTION_DECISION.REQUEST_REVISION;
     const snapshotDocument = await parseCorrectionSnapshotFile(
       formData.get("snapshotDocument"),
       {
@@ -188,7 +192,7 @@ export async function completeGeneralSubdivisionCorrectionAction(
         file: snapshotDocument.file,
         sourceType: snapshotDocument.sourceType,
       });
-    } else if (canUseAppsScriptExport) {
+    } else if (requiresSnapshot && canUseAppsScriptExport) {
       snapshotJobId = await createCorrectionSnapshotJob({
         googleDocId: letter.google_doc_id,
         letterId: parsedInput.data.letterId,
@@ -253,6 +257,7 @@ export async function completeGeneralSubdivisionCorrectionAction(
         });
       }
     } else if (
+      requiresSnapshot &&
       env.GOOGLE_INTEGRATION_MODE === GOOGLE_INTEGRATION_MODE.APPS_SCRIPT &&
       appsScriptExportUrl &&
       hasGoogleDocSource &&
@@ -266,7 +271,7 @@ export async function completeGeneralSubdivisionCorrectionAction(
           snapshotDocument: ["Upload DOCX/PDF hasil koreksi."],
         },
       };
-    } else {
+    } else if (requiresSnapshot) {
       return {
         status: "error",
         message: "Snapshot koreksi wajib tersedia.",
@@ -276,7 +281,7 @@ export async function completeGeneralSubdivisionCorrectionAction(
       };
     }
 
-    if (!uploadedSnapshot && commentsJson === null) {
+    if (requiresSnapshot && !uploadedSnapshot && commentsJson === null) {
       return {
         status: "error",
         message: "Snapshot koreksi atau comments_json wajib tersedia.",

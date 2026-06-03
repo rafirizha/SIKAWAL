@@ -1,16 +1,12 @@
 import "server-only";
 
-import { canCompleteGeneralSubdivisionCorrection } from "@/lib/permissions/letter-permissions";
+import { canCreateFinalVersion } from "@/lib/permissions/letter-permissions";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service-role-client";
-import {
-  LETTER_STATUS,
-  USER_ROLE,
-  VERSION_TYPE,
-} from "@/lib/workflow/constants";
+import { LETTER_STATUS, USER_ROLE } from "@/lib/workflow/constants";
 import { getLatestStoredDocumentMap } from "@/server/queries/letter-working-documents";
 import type { DomainUser, LetterStatus } from "@/types/domain";
 
-type GeneralSubdivisionCorrectionLetterRow = {
+type FinalizationLetterRow = {
   id: string;
   subject: string;
   recipient: string;
@@ -33,19 +29,7 @@ type TeamLookupRow = {
   name: string;
 };
 
-type RevisionSummaryRow = {
-  letter_id: string;
-  change_summary: string | null;
-  version_number: number;
-  created_at: string;
-};
-
-type RevisionSummary = {
-  label: string;
-  value: string;
-};
-
-export type GeneralSubdivisionCorrectionQueueItem = {
+export type FinalizationQueueItem = {
   id: string;
   subject: string;
   recipient: string;
@@ -103,64 +87,18 @@ async function getTeamNameMap(teamIds: string[]) {
   return new Map((data as TeamLookupRow[]).map((row) => [row.id, row.name]));
 }
 
-async function getLatestRevisionSummaryMap(letterIds: string[]) {
-  const uniqueLetterIds = uniqueValues(letterIds);
-
-  if (!uniqueLetterIds.length) {
-    return new Map<string, RevisionSummary>();
-  }
-
-  const supabase = createSupabaseServiceRoleClient();
-  const { data, error } = await supabase
-    .from("letter_versions")
-    .select("letter_id, change_summary, version_number, created_at")
-    .in("letter_id", uniqueLetterIds)
-    .eq("version_type", VERSION_TYPE.REVISION_RESULT)
-    .not("change_summary", "is", null)
-    .order("version_number", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    throw new Error("Ringkasan revisi belum bisa dibaca.");
-  }
-
-  const summaryMap = new Map<string, RevisionSummary>();
-
-  for (const row of (data ?? []) as RevisionSummaryRow[]) {
-    const summary = row.change_summary?.trim();
-
-    if (!summary || summaryMap.has(row.letter_id)) {
-      continue;
-    }
-
-    summaryMap.set(row.letter_id, {
-      label: "Ringkasan Revisi Pegawai",
-      value: summary,
-    });
-  }
-
-  return summaryMap;
-}
-
-export async function getGeneralSubdivisionCorrectionQueue(
+export async function getFinalizationQueue(
   currentUser: DomainUser,
-): Promise<GeneralSubdivisionCorrectionQueueItem[]> {
-  const reviewerTeamId = currentUser.teamId;
-
+): Promise<FinalizationQueueItem[]> {
   if (!currentUser.isActive) {
     return [];
   }
 
   if (
+    currentUser.role !== USER_ROLE.EMPLOYEE &&
     currentUser.role !== USER_ROLE.GENERAL_SUBDIVISION_HEAD &&
+    currentUser.role !== USER_ROLE.HEAD &&
     currentUser.role !== USER_ROLE.ADMIN
-  ) {
-    return [];
-  }
-
-  if (
-    currentUser.role === USER_ROLE.GENERAL_SUBDIVISION_HEAD &&
-    !reviewerTeamId
   ) {
     return [];
   }
@@ -171,14 +109,13 @@ export async function getGeneralSubdivisionCorrectionQueue(
     .select(
       "id, subject, recipient, letter_date, creator_user_id, team_id, status, revision_round, google_doc_url, updated_at",
     )
-    .eq("status", LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION);
+    .eq("status", LETTER_STATUS.INTERNALLY_APPROVED);
 
-  if (currentUser.role !== USER_ROLE.ADMIN) {
-    if (!reviewerTeamId) {
-      return [];
-    }
-
-    query = query.eq("team_id", reviewerTeamId);
+  if (
+    currentUser.role === USER_ROLE.EMPLOYEE ||
+    currentUser.role === USER_ROLE.GENERAL_SUBDIVISION_HEAD
+  ) {
+    query = query.eq("creator_user_id", currentUser.id);
   }
 
   const { data, error } = await query.order("updated_at", {
@@ -186,31 +123,25 @@ export async function getGeneralSubdivisionCorrectionQueue(
   });
 
   if (error) {
-    throw new Error("Antrean koreksi Kasubbag Umum belum bisa dibaca.");
+    throw new Error("Daftar naskah siap final belum bisa dibaca.");
   }
 
-  const rows = (data ?? []) as GeneralSubdivisionCorrectionLetterRow[];
-  const visibleRows = rows.filter((row) =>
-    canCompleteGeneralSubdivisionCorrection(currentUser, {
+  const rows = ((data ?? []) as FinalizationLetterRow[]).filter((row) =>
+    canCreateFinalVersion(currentUser, {
       creatorUserId: row.creator_user_id,
       teamId: row.team_id,
       status: row.status as LetterStatus,
     }),
   );
 
-  const [userNameMap, teamNameMap, storedDocumentMap, revisionSummaryMap] =
-    await Promise.all([
-      getUserNameMap(
-        uniqueValues(visibleRows.map((row) => row.creator_user_id)),
-      ),
-      getTeamNameMap(uniqueValues(visibleRows.map((row) => row.team_id))),
-      getLatestStoredDocumentMap(visibleRows.map((row) => row.id)),
-      getLatestRevisionSummaryMap(visibleRows.map((row) => row.id)),
-    ]);
+  const [userNameMap, teamNameMap, storedDocumentMap] = await Promise.all([
+    getUserNameMap(uniqueValues(rows.map((row) => row.creator_user_id))),
+    getTeamNameMap(uniqueValues(rows.map((row) => row.team_id))),
+    getLatestStoredDocumentMap(rows.map((row) => row.id)),
+  ]);
 
-  return visibleRows.map((row) => {
+  return rows.map((row) => {
     const storedDocument = storedDocumentMap.get(row.id);
-    const revisionSummary = revisionSummaryMap.get(row.id);
 
     return {
       id: row.id,
@@ -223,8 +154,8 @@ export async function getGeneralSubdivisionCorrectionQueue(
       storedDocumentLabel: storedDocument?.label ?? null,
       storedDocumentMeta: storedDocument?.meta ?? null,
       storedDocumentUrl: storedDocument?.url ?? null,
-      correctionNoteLabel: revisionSummary?.label ?? null,
-      correctionNote: revisionSummary?.value ?? null,
+      correctionNoteLabel: null,
+      correctionNote: null,
       creatorName:
         userNameMap.get(row.creator_user_id) ?? "Penyusun tidak aktif",
       teamName: teamNameMap.get(row.team_id) ?? "Tim tidak ditemukan",

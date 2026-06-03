@@ -5,7 +5,7 @@
 Status: PRD v1.1  
 Tanggal update: 20 Mei 2026  
 Target pilot: 1 Juli 2026  
-Lingkup awal: workflow koreksi internal surat/naskah BPS Kabupaten Kepulauan Anambas sebelum finalisasi, tanda tangan basah, distribusi, atau proses SRIKANDI.
+Lingkup awal: workflow koreksi internal surat/naskah BPS Kabupaten Kepulauan Anambas sebelum dokumen dianggap final secara internal.
 
 ## 1. Ringkasan Produk
 
@@ -37,7 +37,7 @@ Keputusan produk:
 - SIKAWAL adalah pendamping internal, bukan pesaing Google Docs atau SRIKANDI.
 - Koreksi detail tetap boleh dilakukan di Google Docs.
 - Tombol `Selesai Koreksi` di SIKAWAL mengunci bukti koreksi sebagai snapshot immutable.
-- Jika SRIKANDI digunakan karena Kepala BPS sedang dinas luar atau kebutuhan legal formal, SIKAWAL hanya menyimpan referensi proses internal dan referensi SRIKANDI setelah final.
+- SRIKANDI hanya menjadi acuan pembanding untuk menjelaskan gap feedback rinci; SIKAWAL tidak menyimpan, menarik, atau mengirim data ke SRIKANDI.
 
 ## 3. Pengguna dan Role
 
@@ -61,7 +61,7 @@ Keputusan produk:
 
 - Menjadi verifikator terakhir.
 - Melakukan koreksi akhir atau menyetujui internal.
-- Menentukan dokumen siap final, siap tanda tangan basah, siap disebarluaskan, atau siap diproses ke SRIKANDI.
+- Menentukan dokumen siap final secara internal.
 
 ### Admin
 
@@ -106,13 +106,12 @@ Draft Pengajuan 1
 -> Final
 ```
 
-### 5.3 Jika Kepala BPS Dinas Luar
+### 5.3 Batas Setelah Final Internal
 
 ```text
 Koreksi internal tetap dicatat di SIKAWAL
 -> dokumen final internal siap
--> proses legal/TTD elektronik dilakukan di SRIKANDI
--> referensi SRIKANDI dicatat balik di SIKAWAL
+-> proses setelah final mengikuti SOP kantor di luar SIKAWAL
 ```
 
 ## 6. Tombol Selesai Koreksi
@@ -122,18 +121,22 @@ Tombol `Selesai Koreksi` adalah fitur kunci.
 Saat verifikator menekan tombol ini:
 
 1. Sistem memastikan user berhak menjadi verifikator tahap tersebut.
-2. Sistem membuat snapshot koreksi:
+2. Sistem membuat snapshot koreksi jika reviewer memberi koreksi atau meminta revisi:
    - DOCX hasil export/manual upload.
    - PDF hasil export/manual upload jika tersedia.
    - `comments_json` dari Google Docs jika integrasi tersedia.
    - metadata reviewer, waktu, role, tahap, dan checksum file.
-3. Sistem membuat versi immutable:
+3. Sistem membuat versi immutable jika ada snapshot/koreksi baru:
    - `Draft Dikoreksi 1 oleh Kasubbag Umum`
    - atau `Draft Dikoreksi 2 oleh Kepala BPS`
 4. Status berubah ke `Perlu Revisi Pegawai` atau `Disetujui Internal`.
 5. Audit log dibuat.
 
 Jika export otomatis gagal, verifikator dapat menggunakan fallback manual upload. Workflow tetap sama.
+
+Setelah Pegawai mengirim hasil revisi, naskah selalu kembali ke Kasubbag Umum sebagai quality gate. Kasubbag Umum yang menentukan apakah revisi perlu diperbaiki lagi atau sudah layak diteruskan ke Kepala BPS.
+
+Jika Kasubbag Umum hanya meneruskan hasil revisi ke Kepala BPS tanpa koreksi tambahan, snapshot tidak wajib. Keputusan tersebut tetap tercatat sebagai approval dan audit trail.
 
 ## 7. Status Dokumen
 
@@ -171,7 +174,7 @@ Aturan:
 - Versi lama tidak boleh ditimpa.
 - Versi koreksi wajib memiliki reviewer.
 - Hasil revisi wajib memiliki `change_summary`.
-- Snapshot koreksi wajib menyimpan minimal satu bukti: file snapshot atau `comments_json`.
+- Snapshot koreksi wajib menyimpan minimal satu bukti: file snapshot atau `comments_json`, jika reviewer meminta revisi atau memberi koreksi tambahan.
 
 ## 9. Requirement Fungsional MVP
 
@@ -234,15 +237,9 @@ Audit log dibuat untuk:
 - Dokumen dibatalkan.
 - Admin mengubah data penting.
 
-### FR-07 Referensi SRIKANDI
+### FR-07 Batas Sistem Resmi
 
-Setelah final atau saat proses resmi dilakukan di SRIKANDI, admin/pegawai berwenang dapat mengisi:
-
-- Nomor/ID SRIKANDI.
-- Tanggal proses SRIKANDI.
-- Link/referensi jika diperbolehkan.
-
-SIKAWAL tidak membuat tanda tangan elektronik resmi.
+SIKAWAL berhenti pada finalisasi internal. Sistem tidak menyimpan metadata proses aplikasi pemerintah lain, tidak membuat penomoran resmi, dan tidak membuat tanda tangan elektronik resmi.
 
 ## 10. Non-Goals MVP
 
@@ -344,10 +341,9 @@ Open questions ini tidak memblokir setup dan MVP dasar:
 - Apakah snapshot wajib DOCX saja, PDF saja, atau keduanya?
 - Apakah Kepala BPS selalu menjadi verifikator terakhir sebelum final?
 - Apakah istilah role final memakai `Kepala BPS`, `Bapak`, atau keduanya di UI?
-- Apakah referensi SRIKANDI cukup berupa nomor/ID, atau perlu link/file bukti juga?
 
 ## 15. Kesimpulan
 
-SIKAWAL layak dilanjutkan sebagai sistem internal untuk mengendalikan koreksi, revisi, snapshot, dan bukti proses sebelum dokumen final masuk SRIKANDI, tanda tangan basah, atau distribusi.
+SIKAWAL layak dilanjutkan sebagai sistem internal untuk mengendalikan koreksi, revisi, snapshot, dan bukti proses sebelum dokumen dianggap final secara internal.
 
 Konsep ini tidak bentrok dengan Google Docs atau SRIKANDI karena SIKAWAL tidak mengambil peran editor utama maupun sistem legal resmi.

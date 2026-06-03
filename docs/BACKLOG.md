@@ -31,7 +31,7 @@ P2 = nice-to-have setelah MVP stabil
 | DEC-001 | Apakah kantor memakai Google Workspace resmi atau akun biasa | TODO   | Link Google Docs manual + fallback upload     |
 | DEC-002 | Snapshot wajib DOCX, PDF, atau keduanya                      | TODO   | DOCX wajib, PDF optional jika export tersedia |
 | DEC-003 | Istilah UI untuk reviewer terakhir                           | TODO   | `Kepala BPS`                                  |
-| DEC-004 | Bentuk referensi SRIKANDI                                    | TODO   | Nomor/ID + catatan manual                     |
+| DEC-004 | Batas SIKAWAL terhadap SRIKANDI                              | DONE   | SRIKANDI hanya acuan pembanding konsep        |
 | DEC-005 | Apakah Apps Script diperbolehkan domain kantor               | TODO   | Manual upload snapshot tetap tersedia         |
 
 ## Sprint 1: Foundation
@@ -87,19 +87,19 @@ P2 = nice-to-have setelah MVP stabil
 | BL-027 | P0        | Head dashboard query            | Kepala BPS melihat antrean valid         | BL-026         | DONE   |
 | BL-028 | P0        | Complete Head correction action | Membuat snapshot koreksi Kepala BPS      | BL-027         | DONE   |
 | BL-029 | P0        | Approve internal action         | Status `Disetujui Internal`, audit log   | BL-027         | DONE   |
-| BL-030 | P1        | Review UI pages                 | Reviewer bisa koreksi/revisi/setuju      | BL-023, BL-029 | TODO   |
+| BL-030 | P1        | Review UI pages                 | Reviewer bisa koreksi/revisi/setuju      | BL-023, BL-029 | DONE   |
 
-## Sprint 6: Final, SRIKANDI Reference, Audit
+## Sprint 6: Final Internal, Timeline, Audit
 
-| ID     | Prioritas | Task                        | Acceptance                            | Dependency     | Status |
-| ------ | --------- | --------------------------- | ------------------------------------- | -------------- | ------ |
-| BL-031 | P0        | Create final version action | Final hanya dari `Disetujui Internal` | BL-029         | TODO   |
-| BL-032 | P0        | Update SRIKANDI reference   | Nomor/ID/catatan tersimpan audit      | BL-031         | TODO   |
-| BL-033 | P0        | Letter detail timeline      | Semua versi dan snapshot terlihat     | BL-018, BL-031 | TODO   |
-| BL-034 | P0        | Audit log viewer            | Audit terbatas sesuai permission      | BL-012         | TODO   |
-| BL-035 | P0        | Cancel action               | Batal sebelum final sesuai permission | BL-012         | TODO   |
-| BL-036 | P1        | Dashboard filters/search    | Search perihal/status/tim             | BL-033         | TODO   |
-| BL-037 | P1        | User guide pilot            | Instruksi Pegawai/Reviewer/Admin      | BL-033         | TODO   |
+| ID     | Prioritas | Task                          | Acceptance                                                         | Dependency     | Status |
+| ------ | --------- | ----------------------------- | ------------------------------------------------------------------ | -------------- | ------ |
+| BL-031 | P0        | Create final version action   | Final hanya dari `Disetujui Internal`                              | BL-029         | DONE   |
+| BL-032 | P0        | Final internal summary        | Catatan final internal tersimpan audit                             | BL-031         | DONE   |
+| BL-033 | P0        | Letter detail timeline        | Semua versi dan snapshot terlihat                                  | BL-018, BL-031 | DONE   |
+| BL-034 | P0        | Audit log viewer              | Audit terbatas sesuai permission                                   | BL-012         | DONE   |
+| BL-035 | P0        | Cancel action                 | Batal sebelum final sesuai permission                              | BL-012         | DONE   |
+| BL-036 | P1        | Dashboard status table/search | Pegawai melihat tabel status dokumen dan search perihal/status/tim | BL-033         | TODO   |
+| BL-037 | P1        | User guide pilot              | Instruksi Pegawai/Reviewer/Admin                                   | BL-033         | TODO   |
 
 ## Testing dan Hardening
 
@@ -116,13 +116,13 @@ P2 = nice-to-have setelah MVP stabil
 
 ## P2 Setelah MVP Stabil
 
-| ID     | Prioritas | Task                             | Alasan Ditunda                           | Status |
-| ------ | --------- | -------------------------------- | ---------------------------------------- | ------ |
-| BL-046 | P2        | PDF annotation native di SIKAWAL | Berat untuk MVP, Google Docs sudah cukup | TODO   |
-| BL-047 | P2        | Integrasi SRIKANDI langsung      | Butuh izin dan API resmi                 | TODO   |
-| BL-048 | P2        | Auto-diff dokumen                | Kompleks dan bukan core pilot            | TODO   |
-| BL-049 | P2        | Reminder otomatis WhatsApp/email | Useful, bukan core evidence trail        | TODO   |
-| BL-050 | P2        | Full Google Docs add-on          | Lebih kompleks dari Apps Script bridge   | TODO   |
+| ID     | Prioritas | Task                               | Alasan Ditunda                           | Status  |
+| ------ | --------- | ---------------------------------- | ---------------------------------------- | ------- |
+| BL-046 | P2        | PDF annotation native di SIKAWAL   | Berat untuk MVP, Google Docs sudah cukup | TODO    |
+| BL-047 | P2        | Integrasi aplikasi legal eksternal | Di luar scope SIKAWAL internal           | DROPPED |
+| BL-048 | P2        | Auto-diff dokumen                  | Kompleks dan bukan core pilot            | TODO    |
+| BL-049 | P2        | Reminder otomatis WhatsApp/email   | Useful, bukan core evidence trail        | TODO    |
+| BL-050 | P2        | Full Google Docs add-on            | Lebih kompleks dari Apps Script bridge   | TODO    |
 
 ## Prompt Next Task
 

@@ -112,7 +112,6 @@ forwardToHead()
 completeHeadCorrection()
 approveInternal()
 createFinalVersion()
-updateSrikandiReference()
 cancelLetter()
 ```
 

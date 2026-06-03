@@ -5,7 +5,12 @@ import {
   canSubmitRevision,
 } from "@/lib/permissions/letter-permissions";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service-role-client";
-import { LETTER_STATUS, USER_ROLE } from "@/lib/workflow/constants";
+import {
+  LETTER_STATUS,
+  USER_ROLE,
+  VERSION_TYPE,
+} from "@/lib/workflow/constants";
+import { getLatestStoredDocumentMap } from "@/server/queries/letter-working-documents";
 import type { DomainUser, LetterStatus, UserRole } from "@/types/domain";
 
 type WorkflowLetterRow = {
@@ -32,7 +37,20 @@ type TeamLookupRow = {
   name: string;
 };
 
-export type Sprint5WorkflowQueueItem = {
+type CorrectionNoteRow = {
+  letter_id: string;
+  notes: string | null;
+  reviewer_role: string | null;
+  version_number: number;
+  created_at: string;
+};
+
+type CorrectionNote = {
+  label: string;
+  value: string;
+};
+
+export type ReviewWorkflowQueueItem = {
   id: string;
   subject: string;
   recipient: string;
@@ -41,6 +59,11 @@ export type Sprint5WorkflowQueueItem = {
   revisionRound: number;
   revisionTargetRole: UserRole | null;
   googleDocUrl: string | null;
+  storedDocumentLabel: string | null;
+  storedDocumentMeta: string | null;
+  storedDocumentUrl: string | null;
+  correctionNoteLabel: string | null;
+  correctionNote: string | null;
   creatorName: string;
   teamName: string;
   updatedAt: string;
@@ -86,30 +109,85 @@ async function getTeamNameMap(teamIds: string[]) {
   return new Map((data as TeamLookupRow[]).map((row) => [row.id, row.name]));
 }
 
-async function decorateRows(rows: WorkflowLetterRow[]) {
-  const [userNameMap, teamNameMap] = await Promise.all([
-    getUserNameMap(uniqueValues(rows.map((row) => row.creator_user_id))),
-    getTeamNameMap(uniqueValues(rows.map((row) => row.team_id))),
-  ]);
+async function getLatestCorrectionNoteMap(letterIds: string[]) {
+  const uniqueLetterIds = uniqueValues(letterIds);
 
-  return rows.map((row) => ({
-    id: row.id,
-    subject: row.subject,
-    recipient: row.recipient,
-    letterDate: row.letter_date,
-    status: row.status as LetterStatus,
-    revisionRound: row.revision_round,
-    revisionTargetRole: row.revision_target_role as UserRole | null,
-    googleDocUrl: row.google_doc_url,
-    creatorName: userNameMap.get(row.creator_user_id) ?? "Penyusun tidak aktif",
-    teamName: teamNameMap.get(row.team_id) ?? "Tim tidak ditemukan",
-    updatedAt: row.updated_at,
-  }));
+  if (!uniqueLetterIds.length) {
+    return new Map<string, CorrectionNote>();
+  }
+
+  const supabase = createSupabaseServiceRoleClient();
+  const { data, error } = await supabase
+    .from("letter_versions")
+    .select("letter_id, notes, reviewer_role, version_number, created_at")
+    .in("letter_id", uniqueLetterIds)
+    .eq("version_type", VERSION_TYPE.CORRECTED_DRAFT)
+    .not("notes", "is", null)
+    .order("version_number", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error("Catatan koreksi belum bisa dibaca.");
+  }
+
+  const noteMap = new Map<string, CorrectionNote>();
+
+  for (const row of (data ?? []) as CorrectionNoteRow[]) {
+    const note = row.notes?.trim();
+
+    if (!note || noteMap.has(row.letter_id)) {
+      continue;
+    }
+
+    noteMap.set(row.letter_id, {
+      label: row.reviewer_role
+        ? `Catatan ${row.reviewer_role}`
+        : "Catatan koreksi",
+      value: note,
+    });
+  }
+
+  return noteMap;
+}
+
+async function decorateRows(rows: WorkflowLetterRow[]) {
+  const [userNameMap, teamNameMap, storedDocumentMap, correctionNoteMap] =
+    await Promise.all([
+      getUserNameMap(uniqueValues(rows.map((row) => row.creator_user_id))),
+      getTeamNameMap(uniqueValues(rows.map((row) => row.team_id))),
+      getLatestStoredDocumentMap(rows.map((row) => row.id)),
+      getLatestCorrectionNoteMap(rows.map((row) => row.id)),
+    ]);
+
+  return rows.map((row) => {
+    const storedDocument = storedDocumentMap.get(row.id);
+    const correctionNote = correctionNoteMap.get(row.id);
+
+    return {
+      id: row.id,
+      subject: row.subject,
+      recipient: row.recipient,
+      letterDate: row.letter_date,
+      status: row.status as LetterStatus,
+      revisionRound: row.revision_round,
+      revisionTargetRole: row.revision_target_role as UserRole | null,
+      googleDocUrl: row.google_doc_url,
+      storedDocumentLabel: storedDocument?.label ?? null,
+      storedDocumentMeta: storedDocument?.meta ?? null,
+      storedDocumentUrl: storedDocument?.url ?? null,
+      correctionNoteLabel: correctionNote?.label ?? null,
+      correctionNote: correctionNote?.value ?? null,
+      creatorName:
+        userNameMap.get(row.creator_user_id) ?? "Penyusun tidak aktif",
+      teamName: teamNameMap.get(row.team_id) ?? "Tim tidak ditemukan",
+      updatedAt: row.updated_at,
+    };
+  });
 }
 
 export async function getRevisionQueue(
   currentUser: DomainUser,
-): Promise<Sprint5WorkflowQueueItem[]> {
+): Promise<ReviewWorkflowQueueItem[]> {
   if (!currentUser.isActive) {
     return [];
   }
@@ -155,7 +233,7 @@ export async function getRevisionQueue(
 
 export async function getHeadCorrectionQueue(
   currentUser: DomainUser,
-): Promise<Sprint5WorkflowQueueItem[]> {
+): Promise<ReviewWorkflowQueueItem[]> {
   if (!currentUser.isActive) {
     return [];
   }

@@ -34,7 +34,6 @@ Menunggu Koreksi Kasubbag Umum -> Menunggu Koreksi Kepala BPS
 Menunggu Koreksi Kasubbag Umum -> Dibatalkan
 
 Perlu Revisi Pegawai -> Menunggu Koreksi Kasubbag Umum
-Perlu Revisi Pegawai -> Menunggu Koreksi Kepala BPS
 Perlu Revisi Pegawai -> Dibatalkan
 
 Menunggu Koreksi Kepala BPS -> Perlu Revisi Pegawai
@@ -65,14 +64,14 @@ Aturan:
 
 ## Tombol Selesai Koreksi
 
-`Selesai Koreksi` berarti verifikator menyatakan koreksinya selesai dan bukti koreksi harus dikunci.
+`Selesai Koreksi` berarti verifikator menyatakan keputusan tahap koreksinya selesai. Bukti koreksi wajib dikunci jika reviewer meminta revisi atau memberi koreksi tambahan.
 
 Saat tombol ditekan, sistem wajib:
 
 - Memvalidasi role reviewer dan status saat ini.
-- Membuat versi `Draft Dikoreksi`.
-- Menyimpan reviewer role, reviewer user, timestamp, dan revision round.
-- Menyimpan minimal satu evidence:
+- Membuat versi `Draft Dikoreksi` jika ada koreksi/snapshot baru.
+- Menyimpan reviewer role, reviewer user, timestamp, dan revision round pada versi koreksi jika dibuat.
+- Menyimpan minimal satu evidence jika keputusan adalah `Perlu Revisi Pegawai`:
   - file snapshot DOCX/PDF, atau
   - `comments_json` dari Google Docs.
 - Membuat audit log.
@@ -80,6 +79,8 @@ Saat tombol ditekan, sistem wajib:
   - ke `Perlu Revisi Pegawai` jika perlu revisi.
   - ke `Menunggu Koreksi Kepala BPS` jika Kasubbag Umum menyetujui lanjut.
   - ke `Disetujui Internal` jika Kepala BPS menyetujui.
+
+Jika Kasubbag Umum hanya memvalidasi hasil revisi Pegawai dan meneruskan ke Kepala BPS tanpa koreksi tambahan, snapshot tidak wajib. Sistem tetap wajib mencatat `FORWARD_TO_HEAD` pada approval dan audit log dengan version_id versi terakhir.
 
 Catatan: export otomatis dari Google Docs boleh gagal. Fallback manual upload harus tetap tersedia.
 
@@ -103,12 +104,13 @@ Aturan:
 - `parent_version_id` menghubungkan versi baru ke versi sebelumnya.
 - `revision_round` naik setiap siklus koreksi/revisi.
 - `Hasil Revisi` wajib punya `change_summary`.
-- `Draft Dikoreksi` wajib punya reviewer dan evidence koreksi.
+- Setelah Pegawai mengirim `Hasil Revisi`, dokumen selalu kembali ke Kasubbag Umum sebagai quality gate sebelum dapat diteruskan ke Kepala BPS.
+- `Draft Dikoreksi` wajib punya reviewer dan evidence koreksi jika versi tersebut dibuat.
 - `Naskah Final` hanya dapat dibuat dari status `Disetujui Internal`.
 
 ## Snapshot
 
-Snapshot adalah bukti kondisi dokumen pada saat tertentu, khususnya saat verifikator menekan `Selesai Koreksi`.
+Snapshot adalah bukti kondisi dokumen pada saat tertentu, khususnya saat verifikator memberi koreksi atau meminta revisi.
 
 Snapshot dapat berupa:
 
@@ -141,19 +143,20 @@ Aturan:
 
 - SIKAWAL boleh menyimpan link dan Google Doc ID.
 - Komentar/suggestion dilakukan di Google Docs.
-- Setelah `Selesai Koreksi`, evidence harus disalin/dikunci di SIKAWAL.
+- Setelah reviewer memberi koreksi atau meminta revisi, evidence harus disalin/dikunci di SIKAWAL.
 - Perubahan Google Docs setelah snapshot tidak mengubah evidence lama.
 - Jika perlu koreksi lanjutan, buat versi/snapshot baru.
 
 ## SRIKANDI
 
-SRIKANDI adalah sistem resmi/legal pemerintah. SIKAWAL hanya menyimpan referensi setelah dokumen final atau proses resmi berjalan.
+SRIKANDI adalah sistem resmi/legal pemerintah yang menjadi acuan pembanding untuk menjelaskan gap feedback rinci. SIKAWAL tidak terhubung ke SRIKANDI dan tidak menyimpan metadata proses SRIKANDI.
 
 Aturan:
 
 - SIKAWAL tidak membuat tanda tangan elektronik resmi.
 - SIKAWAL tidak mengganti arsip legal SRIKANDI.
-- Referensi SRIKANDI bersifat metadata: nomor/ID, tanggal, catatan, dan link/file bukti jika diperbolehkan.
+- SIKAWAL tidak menyimpan nomor, link, tanggal proses, atau status dari aplikasi pemerintah lain.
+- SIKAWAL berhenti pada finalisasi internal dan evidence trail internal.
 
 ## Audit Trail
 
@@ -167,7 +170,6 @@ Audit log wajib dibuat untuk:
 - Hasil revisi dikirim.
 - Dokumen disetujui internal.
 - Naskah final dibuat.
-- Referensi SRIKANDI diisi/diubah.
 - Dokumen dibatalkan.
 - Admin mengubah data penting.
 

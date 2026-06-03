@@ -89,7 +89,7 @@ Output:
 Exit criteria:
 
 - Kasubbag Umum hanya melihat dokumen timnya.
-- Snapshot koreksi tersimpan.
+- Snapshot koreksi tersimpan jika reviewer meminta revisi atau memberi koreksi tambahan.
 - Audit log dibuat.
 
 ## Phase 5: Revisi Pegawai
@@ -100,13 +100,13 @@ Output:
 - Upload/link versi revisi.
 - `change_summary` wajib.
 - Version `Hasil Revisi 1`.
-- Routing status ke reviewer berikutnya.
+- Routing status kembali ke Kasubbag Umum sebagai quality gate.
 
 Exit criteria:
 
 - Pegawai bisa mengirim revisi.
 - Versi lama tidak tertimpa.
-- Status kembali ke Kasubbag Umum atau Kepala BPS sesuai tahap.
+- Status selalu kembali ke Kasubbag Umum sebelum dapat diteruskan lagi ke Kepala BPS.
 
 ## Phase 6: Koreksi dan Persetujuan Kepala BPS
 
@@ -123,19 +123,19 @@ Exit criteria:
 - Kepala BPS hanya memproses dokumen valid.
 - Koreksi akhir dan persetujuan internal tercatat.
 
-## Phase 7: Finalisasi dan Referensi SRIKANDI
+## Phase 7: Finalisasi Internal
 
 Output:
 
 - Upload/link naskah final bersih.
 - Status `Final`.
-- Field referensi SRIKANDI.
+- Catatan final internal.
 - Timeline final.
 
 Exit criteria:
 
 - Final hanya dibuat setelah `Disetujui Internal`.
-- Referensi SRIKANDI bisa dicatat tanpa membuat SIKAWAL menjadi sistem legal resmi.
+- SIKAWAL berhenti pada finalisasi internal dan tidak menyimpan metadata aplikasi legal eksternal.
 
 ## Phase 8: Dashboard, Audit, Polish
 
@@ -158,9 +158,9 @@ Test wajib:
 
 - Permission Pegawai, Kasubbag Umum, Kepala BPS, Admin.
 - Transition status valid/invalid.
-- `Selesai Koreksi` membuat snapshot/version/audit.
+- `Selesai Koreksi` membuat snapshot/version/audit saat ada koreksi, dan tetap membuat approval/audit saat hanya meneruskan.
 - Hasil revisi wajib `change_summary`.
 - Versi lama immutable.
 - Export/upload snapshot gagal tidak membuat versi palsu.
 - Final hanya dari `Disetujui Internal`.
-- Referensi SRIKANDI tidak mengubah dokumen final lama.
+- Finalisasi internal tidak mengubah versi koreksi lama.

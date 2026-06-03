@@ -65,8 +65,8 @@ Sebuah fitur dianggap selesai jika:
 
 - Google Docs boleh dipakai sebagai alat koreksi.
 - Google Apps Script boleh dipakai sebagai bridge export snapshot, tetapi wajib ada fallback manual upload.
-- SRIKANDI hanya dicatat sebagai referensi setelah final/proses resmi.
-- Penomoran resmi, e-signature, integrasi SRIKANDI, dan PDF annotation native penuh ditunda.
+- SRIKANDI hanya menjadi acuan pembanding untuk menjelaskan gap feedback rinci; SIKAWAL tidak menyimpan referensi atau terhubung ke SRIKANDI.
+- Penomoran resmi, e-signature, dan integrasi SRIKANDI berada di luar scope SIKAWAL. PDF annotation native penuh ditunda.
 
 ## Stop Conditions
 

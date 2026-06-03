@@ -29,7 +29,10 @@ function isSameTeam(user: PermissionUser, letter: PermissionLetter) {
 }
 
 function isBeforeFinal(letter: PermissionLetter) {
-  return letter.status !== LETTER_STATUS.FINAL;
+  return (
+    letter.status !== LETTER_STATUS.FINAL &&
+    letter.status !== LETTER_STATUS.CANCELED
+  );
 }
 
 function hasRole(user: PermissionUser, role: UserRole) {
@@ -67,6 +70,7 @@ export function canViewLetter(user: PermissionUser, letter: PermissionLetter) {
       LETTER_STATUS.WAITING_HEAD_CORRECTION,
       LETTER_STATUS.INTERNALLY_APPROVED,
       LETTER_STATUS.FINAL,
+      LETTER_STATUS.CANCELED,
     ]);
   }
 
@@ -171,20 +175,6 @@ export function canCreateFinalVersion(
   );
 }
 
-export function canUpdateSrikandiReference(
-  user: PermissionUser,
-  letter: PermissionLetter,
-) {
-  if (!isActive(user)) return false;
-  if (letter.status !== LETTER_STATUS.FINAL) return false;
-
-  return (
-    isAdmin(user) ||
-    hasRole(user, USER_ROLE.HEAD) ||
-    (hasRole(user, USER_ROLE.EMPLOYEE) && isOwner(user, letter))
-  );
-}
-
 export function canCancelLetter(
   user: PermissionUser,
   letter: PermissionLetter,
@@ -205,7 +195,10 @@ export function canCancelLetter(
   }
 
   if (hasRole(user, USER_ROLE.HEAD)) {
-    return letter.status === LETTER_STATUS.WAITING_HEAD_CORRECTION;
+    return isStatusIn(letter.status, [
+      LETTER_STATUS.WAITING_HEAD_CORRECTION,
+      LETTER_STATUS.INTERNALLY_APPROVED,
+    ]);
   }
 
   return false;

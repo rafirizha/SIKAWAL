@@ -14,7 +14,7 @@ Tahap 1: MVP cloud gratis/hemat
 Tahap 2: Pilot terbatas
 - Gunakan data yang diizinkan
 - Snapshot evidence tetap tersimpan di SIKAWAL
-- SRIKANDI tetap sistem resmi/legal
+- SRIKANDI tetap sistem resmi/legal sebagai acuan pembanding, bukan target integrasi atau metadata aplikasi
 
 Tahap 3: Migrasi internal
 - PostgreSQL internal BPS
@@ -71,15 +71,9 @@ Namun:
 
 ### SRIKANDI
 
-SRIKANDI tetap sistem resmi/legal. SIKAWAL hanya menyimpan referensi internal:
+SRIKANDI tetap sistem resmi/legal dan hanya menjadi konteks pembanding. SIKAWAL tidak menyimpan nomor, link, tanggal proses, atau status dari aplikasi pemerintah lain.
 
-```text
-srikandi_reference_number
-srikandi_reference_url
-srikandi_processed_at
-```
-
-Jangan membuat fitur yang mengklaim menggantikan proses legal SRIKANDI.
+Jangan membuat fitur yang mengklaim menggantikan proses legal SRIKANDI, mengintegrasikan langsung ke SRIKANDI, atau menyimpan status/nomor/link proses SRIKANDI.
 
 ### Auth
 

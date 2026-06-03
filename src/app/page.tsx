@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   ClipboardCheck,
@@ -9,27 +10,28 @@ import {
 
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { LETTER_STATUS, VERSION_TYPE } from "@/lib/workflow/constants";
 
 const statusItems = [
   {
     label: LETTER_STATUS.DRAFT,
-    value: "0",
+    value: "Tahap 0",
     helper: "Belum diajukan",
   },
   {
     label: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
-    value: "0",
+    value: "Tahap 1",
     helper: "Antrean tahap pertama",
   },
   {
     label: LETTER_STATUS.NEEDS_REVISION,
-    value: "0",
+    value: "Tahap 2",
     helper: "Menunggu penyusun",
   },
   {
     label: LETTER_STATUS.WAITING_HEAD_CORRECTION,
-    value: "0",
+    value: "Tahap 3",
     helper: "Validasi akhir",
   },
 ];
@@ -71,7 +73,13 @@ const evidenceItems = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const currentUser = await getCurrentUser();
+
+  if (currentUser) {
+    redirect("/dashboard");
+  }
+
   return (
     <AppShell>
       <main className="min-h-screen bg-[linear-gradient(180deg,hsl(var(--muted))_0%,hsl(var(--background))_32rem)]">
@@ -89,7 +97,7 @@ export default function Home() {
                 <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
                   Google Docs tetap jadi ruang koreksi. SIKAWAL mengatur siapa
                   yang menunggu, versi mana yang terkunci, dan bukti apa yang
-                  siap ditelusuri sebelum final atau SRIKANDI.
+                  siap ditelusuri sebelum final internal.
                 </p>
               </div>
 

@@ -72,9 +72,6 @@ revision_round
 google_doc_id
 google_doc_url
 final_version_id
-srikandi_reference_number
-srikandi_reference_url
-srikandi_processed_at
 data_classification
 cancel_reason
 created_at
@@ -233,7 +230,6 @@ FORWARD_TO_HEAD
 APPROVE_INTERNAL
 CREATE_FINAL
 CANCEL
-UPDATE_SRIKANDI_REFERENCE
 ```
 
 ### audit_logs
@@ -275,12 +271,11 @@ Jangan menyimpan file resmi/sensitif di cloud eksternal tanpa izin. Pilot ekster
 Gunakan transaksi database untuk:
 
 - Submit draft dan membuat versi pengajuan.
-- Membuat snapshot koreksi dan mengubah status.
+- Membuat snapshot koreksi jika ada evidence koreksi, lalu mengubah status.
 - Mengirim hasil revisi.
 - Approve internal.
 - Membuat naskah final.
 - Membatalkan dokumen.
-- Mengisi/mengubah referensi SRIKANDI.
 
 File export/upload dilakukan sebelum transaksi DB dianggap final. Jika DB gagal, lakukan cleanup storage best-effort.
 
@@ -296,15 +291,21 @@ complete_general_subdivision_correction
 submit_letter_revision
 complete_head_correction
 approve_internal_letter
+create_final_letter
+cancel_letter
 ```
 
-`complete_general_subdivision_correction` menerima evidence `storage_path` snapshot atau `comments_json`. Jika `source_type` adalah `manual_snapshot_upload`, file snapshot tetap wajib dan harus punya MIME DOCX/PDF, ukuran, serta checksum. Jika `source_type` adalah `apps_script_export`, `comments_json` dapat menjadi evidence minimal saat file export tidak tersedia, tetapi tidak boleh kosong. Jika export otomatis memakai `correction_snapshot_jobs`, status job diselesaikan dalam transaksi RPC yang sama.
+`complete_general_subdivision_correction` menerima evidence `storage_path` snapshot atau `comments_json`. Jika keputusan `request_revision`, evidence wajib tersedia. Jika keputusan `forward_to_head`, evidence bersifat opsional: jika tidak ada snapshot baru, RPC hanya mengubah status, mencatat `FORWARD_TO_HEAD`, dan memakai `version_id` terakhir sebagai referensi audit. Jika `source_type` adalah `manual_snapshot_upload` dan evidence file tersedia, file snapshot harus punya MIME DOCX/PDF, ukuran, serta checksum. Jika `source_type` adalah `apps_script_export`, `comments_json` dapat menjadi evidence minimal saat file export tidak tersedia, tetapi tidak boleh kosong. Jika export otomatis memakai `correction_snapshot_jobs`, status job diselesaikan dalam transaksi RPC yang sama.
 
-`submit_letter_revision` membuat versi `Hasil Revisi` secara append-only, mewajibkan `change_summary`, lalu mengembalikan status ke reviewer target (`Kasubbag Umum` atau `Kepala BPS`).
+`submit_letter_revision` membuat versi `Hasil Revisi` secara append-only, mewajibkan `change_summary`, lalu selalu mengembalikan status ke `Menunggu Koreksi Kasubbag Umum`. Jika revisi sebelumnya diminta oleh Kepala BPS, Kasubbag Umum tetap menjadi quality gate sebelum dokumen diteruskan lagi ke Kepala BPS.
 
 `complete_head_correction` mengikuti aturan snapshot yang sama dengan koreksi Kasubbag Umum, tetapi reviewer role dikunci sebagai `Kepala BPS` dan status berikutnya menjadi `Perlu Revisi Pegawai`.
 
 `approve_internal_letter` hanya mengubah status dari `Menunggu Koreksi Kepala BPS` ke `Disetujui Internal` dan tetap mencatat approval serta audit log tanpa membuat versi dokumen baru.
+
+`create_final_letter` hanya menerima dokumen berstatus `Disetujui Internal`, membuat versi append-only `Naskah Final`, mengisi `final_version_id`, mengubah status ke `Final`, serta mencatat approval dan audit log dalam transaksi database yang sama. Evidence final minimal berupa file DOCX/PDF atau link Google Docs final.
+
+`cancel_letter` menolak dokumen yang sudah `Final` atau `Dibatalkan`, mewajibkan alasan pembatalan, mengubah status ke `Dibatalkan`, serta mencatat approval dan audit log dalam transaksi database yang sama.
 
 ## Migration Notes
 

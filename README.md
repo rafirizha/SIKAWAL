@@ -1,6 +1,6 @@
 # SIKAWAL
 
-SIKAWAL adalah aplikasi internal untuk workflow koreksi naskah, snapshot bukti koreksi, history versi, dan audit trail sebelum dokumen final masuk proses resmi seperti SRIKANDI atau tanda tangan basah.
+SIKAWAL adalah aplikasi internal untuk workflow koreksi naskah, snapshot bukti koreksi, history versi, dan audit trail sebelum dokumen dianggap final secara internal.
 
 ## Positioning
 

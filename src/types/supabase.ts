@@ -69,9 +69,6 @@ export type Database = {
           google_doc_id: string | null;
           google_doc_url: string | null;
           final_version_id: string | null;
-          srikandi_reference_number: string | null;
-          srikandi_reference_url: string | null;
-          srikandi_processed_at: string | null;
           data_classification: string;
           cancel_reason: string | null;
           created_at: string;
@@ -91,9 +88,6 @@ export type Database = {
           google_doc_id?: string | null;
           google_doc_url?: string | null;
           final_version_id?: string | null;
-          srikandi_reference_number?: string | null;
-          srikandi_reference_url?: string | null;
-          srikandi_processed_at?: string | null;
           data_classification?: string;
           cancel_reason?: string | null;
           created_at?: string;
@@ -355,6 +349,36 @@ export type Database = {
           input_letter_id: string;
           input_actor_user_id: string;
           input_notes?: string | null;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string;
+        }[];
+      };
+      cancel_letter: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_cancel_reason: string;
+        };
+        Returns: {
+          letter_id: string;
+          version_id: string | null;
+        }[];
+      };
+      create_final_letter: {
+        Args: {
+          input_letter_id: string;
+          input_actor_user_id: string;
+          input_storage_path?: string | null;
+          input_file_url?: string | null;
+          input_file_mime_type?: string | null;
+          input_file_size_bytes?: number | null;
+          input_checksum_sha256?: string | null;
+          input_google_doc_id?: string | null;
+          input_google_doc_url?: string | null;
+          input_source_type?: string | null;
+          input_final_summary?: string | null;
         };
         Returns: {
           letter_id: string;
