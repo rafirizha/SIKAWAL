@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 
-import { AppShell } from "@/components/layout/app-shell";
 import { LetterDetailView } from "@/features/letters/components/letter-detail-view";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getLetterDetail } from "@/server/queries/letter-detail-queries";
@@ -27,9 +26,5 @@ export default async function LetterDetailPage({
     notFound();
   }
 
-  return (
-    <AppShell>
-      <LetterDetailView detail={detail} />
-    </AppShell>
-  );
+  return <LetterDetailView detail={detail} />;
 }

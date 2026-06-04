@@ -263,6 +263,7 @@ export async function createDraftLetterAction(
     const createdLetterId = data?.letter_id ?? letterId;
 
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
     revalidatePath("/letters/new");
 
     return {
@@ -339,6 +340,7 @@ export async function submitDraftToGeneralSubdivisionAction(
 
     await submitDraftToGeneralSubdivision(letterId, currentUser.id);
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
 
     return {
       status: "success",

@@ -179,7 +179,7 @@ describe("letter permissions", () => {
     };
 
     expect(canCreateFinalVersion(employee, approvedLetter)).toBe(true);
-    expect(canCreateFinalVersion(head, approvedLetter)).toBe(true);
+    expect(canCreateFinalVersion(head, approvedLetter)).toBe(false);
     expect(canCreateFinalVersion(admin, approvedLetter)).toBe(true);
     expect(canCreateFinalVersion(otherEmployee, approvedLetter)).toBe(false);
     expect(canCreateFinalVersion(employee, draftLetter)).toBe(false);

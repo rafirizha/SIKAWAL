@@ -318,6 +318,7 @@ export async function completeGeneralSubdivisionCorrectionAction(
     snapshotJobFinalized = true;
 
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
 
     return {
       status: "success",

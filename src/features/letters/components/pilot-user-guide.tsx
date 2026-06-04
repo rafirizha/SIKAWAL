@@ -47,7 +47,7 @@ const guideSections: GuideSection[] = [
 
 export function PilotUserGuide() {
   return (
-    <section className="rounded-lg border bg-card">
+    <section className="rounded-lg border bg-card" id="panduan">
       <div className="border-b px-5 py-4">
         <h2 className="break-words text-lg font-semibold">Panduan Pilot</h2>
         <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">

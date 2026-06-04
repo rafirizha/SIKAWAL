@@ -97,7 +97,6 @@ export async function getFinalizationQueue(
   if (
     currentUser.role !== USER_ROLE.EMPLOYEE &&
     currentUser.role !== USER_ROLE.GENERAL_SUBDIVISION_HEAD &&
-    currentUser.role !== USER_ROLE.HEAD &&
     currentUser.role !== USER_ROLE.ADMIN
   ) {
     return [];
@@ -111,10 +110,7 @@ export async function getFinalizationQueue(
     )
     .eq("status", LETTER_STATUS.INTERNALLY_APPROVED);
 
-  if (
-    currentUser.role === USER_ROLE.EMPLOYEE ||
-    currentUser.role === USER_ROLE.GENERAL_SUBDIVISION_HEAD
-  ) {
+  if (currentUser.role !== USER_ROLE.ADMIN) {
     query = query.eq("creator_user_id", currentUser.id);
   }
 

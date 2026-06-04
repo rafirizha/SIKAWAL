@@ -21,8 +21,8 @@ const statusTone: Record<LetterStatus, string> = {
   [LETTER_STATUS.DRAFT]: "bg-slate-100 text-slate-700",
   [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]:
     "bg-amber-50 text-amber-800",
-  [LETTER_STATUS.NEEDS_REVISION]: "bg-red-50 text-red-800",
-  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-blue-50 text-blue-800",
+  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-50 text-rose-800",
+  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-50 text-sky-800",
   [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-50 text-emerald-800",
   [LETTER_STATUS.FINAL]: "bg-green-50 text-green-800",
   [LETTER_STATUS.CANCELED]: "bg-zinc-100 text-zinc-700",
@@ -122,12 +122,12 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
   }, [items, searchQuery, selectedStatus]);
 
   return (
-    <section className="rounded-lg border bg-card">
+    <section className="rounded-lg border bg-card" id="dokumen">
       <div className="border-b px-5 py-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
             <h2 className="break-words text-lg font-semibold">
-              Status Dokumen Saya
+              Status Dokumen
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
               Pantau posisi naskah, versi terakhir, dan dokumen kerja yang
@@ -179,7 +179,7 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
 
       {items.length === 0 ? (
         <div className="px-5 py-8 text-sm leading-6 text-muted-foreground">
-          Belum ada dokumen yang dibuat akun ini.
+          Belum ada dokumen yang bisa diakses akun ini.
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="px-5 py-8 text-sm leading-6 text-muted-foreground">
@@ -194,7 +194,7 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
                   <div className="min-w-0">
                     <p className="break-words font-medium">{item.subject}</p>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                      {item.recipient} • {formatDate(item.letterDate)}
+                      {item.recipient} - {formatDate(item.letterDate)}
                     </p>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">
                       {item.teamName}
@@ -265,7 +265,7 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
                     <td className="px-5 py-4">
                       <p className="break-words font-medium">{item.subject}</p>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                        {item.recipient} • {formatDate(item.letterDate)}
+                        {item.recipient} - {formatDate(item.letterDate)}
                       </p>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">
                         {item.teamName}

@@ -20,7 +20,7 @@ type GeneralSubdivisionQueueProps = {
   items: GeneralSubdivisionCorrectionQueueItem[];
 };
 
-function CorrectionForm({
+function ForwardToHeadForm({
   letter,
 }: {
   letter: GeneralSubdivisionCorrectionQueueItem;
@@ -31,55 +31,83 @@ function CorrectionForm({
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-4 border-t pt-4">
+    <form action={formAction} className="flex flex-col gap-4">
       <input name="letterId" type="hidden" value={letter.id} />
+      <input
+        name="correctionDecision"
+        type="hidden"
+        value={GENERAL_SUBDIVISION_CORRECTION_DECISION.FORWARD_TO_HEAD}
+      />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <div className="flex flex-col gap-2">
-          <label
-            className="text-sm font-medium"
-            htmlFor={`correctionDecision-${letter.id}`}
-          >
-            Hasil Koreksi
-          </label>
-          <select
-            aria-describedby={`correctionDecision-${letter.id}-error`}
-            aria-invalid={Boolean(state.fieldErrors?.correctionDecision)}
-            className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            defaultValue=""
-            id={`correctionDecision-${letter.id}`}
-            name="correctionDecision"
-            required
-          >
-            <option value="" disabled>
-              Pilih hasil koreksi
-            </option>
-            <option
-              value={GENERAL_SUBDIVISION_CORRECTION_DECISION.FORWARD_TO_HEAD}
-            >
-              Lanjut ke Kepala BPS
-            </option>
-            <option
-              value={GENERAL_SUBDIVISION_CORRECTION_DECISION.REQUEST_REVISION}
-            >
-              Perlu Revisi Pegawai
-            </option>
-          </select>
-          <FieldError
-            errors={state.fieldErrors?.correctionDecision}
-            id={`correctionDecision-${letter.id}-error`}
-          />
-        </div>
+      <div className="flex flex-col gap-2">
+        <label
+          className="text-sm font-medium"
+          htmlFor={`forwardNotes-${letter.id}`}
+        >
+          Catatan Persetujuan
+        </label>
+        <textarea
+          aria-describedby={`forwardNotes-${letter.id}-hint forwardNotes-${letter.id}-error`}
+          aria-invalid={Boolean(state.fieldErrors?.notes)}
+          className="min-h-20 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          id={`forwardNotes-${letter.id}`}
+          maxLength={1000}
+          name="notes"
+        />
+        <p
+          className="text-xs leading-5 text-muted-foreground"
+          id={`forwardNotes-${letter.id}-hint`}
+        >
+          Opsional, tercatat sebagai konteks approval Kasubbag Umum.
+        </p>
+        <FieldError
+          errors={state.fieldErrors?.notes}
+          id={`forwardNotes-${letter.id}-error`}
+        />
+      </div>
 
+      <ActionMessage message={state.message} status={state.status} />
+
+      <div className="flex justify-end">
+        <SubmitButton pendingChildren="Meneruskan...">
+          <FileCheck2 className="h-4 w-4" aria-hidden="true" />
+          Lanjut ke Kepala BPS
+        </SubmitButton>
+      </div>
+    </form>
+  );
+}
+
+function RequestRevisionForm({
+  letter,
+}: {
+  letter: GeneralSubdivisionCorrectionQueueItem;
+}) {
+  const [state, formAction] = useActionState(
+    completeGeneralSubdivisionCorrectionAction,
+    initialCorrectionActionState,
+  );
+
+  return (
+    <form action={formAction} className="flex flex-col gap-4">
+      <input name="letterId" type="hidden" value={letter.id} />
+      <input
+        name="correctionDecision"
+        type="hidden"
+        value={GENERAL_SUBDIVISION_CORRECTION_DECISION.REQUEST_REVISION}
+      />
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <FileInputField
           errors={state.fieldErrors?.snapshotDocument}
-          hint="Wajib jika meminta revisi Pegawai. Opsional saat hanya meneruskan ke Kepala BPS."
+          hint="Wajib sebagai evidence koreksi yang perlu diperbaiki Pegawai."
           id={`snapshotDocument-${letter.id}`}
           label="Snapshot Koreksi"
           name="snapshotDocument"
+          required
         />
 
-        <div className="flex flex-col gap-2 lg:col-span-2">
+        <div className="flex flex-col gap-2">
           <label className="text-sm font-medium" htmlFor={`notes-${letter.id}`}>
             Catatan
           </label>
@@ -101,9 +129,9 @@ function CorrectionForm({
       <ActionMessage message={state.message} status={state.status} />
 
       <div className="flex justify-end">
-        <SubmitButton>
+        <SubmitButton pendingChildren="Mengirim revisi...">
           <FileCheck2 className="h-4 w-4" aria-hidden="true" />
-          Selesai Koreksi
+          Minta Revisi Pegawai
         </SubmitButton>
       </div>
     </form>
@@ -135,7 +163,29 @@ export function GeneralSubdivisionQueue({
               letter={letter}
               roundLabel={`Putaran ${letter.revisionRound + 1}`}
             />
-            <CorrectionForm letter={letter} />
+            <div className="grid gap-3 border-t pt-4 lg:grid-cols-2">
+              <section className="rounded-md border bg-emerald-50/50 p-4">
+                <h4 className="text-sm font-semibold text-emerald-900">
+                  Approve Kasubbag
+                </h4>
+                <p className="mt-1 text-xs leading-5 text-emerald-800">
+                  Dokumen layak diteruskan ke Kepala BPS.
+                </p>
+                <div className="mt-4">
+                  <ForwardToHeadForm letter={letter} />
+                </div>
+              </section>
+
+              <section className="rounded-md border bg-background p-4">
+                <h4 className="text-sm font-semibold">Minta Revisi</h4>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Dokumen perlu dikembalikan ke Pegawai dengan snapshot koreksi.
+                </p>
+                <div className="mt-4">
+                  <RequestRevisionForm letter={letter} />
+                </div>
+              </section>
+            </div>
           </article>
         ))}
       </div>

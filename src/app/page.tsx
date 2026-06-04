@@ -18,21 +18,25 @@ const statusItems = [
     label: LETTER_STATUS.DRAFT,
     value: "Tahap 0",
     helper: "Belum diajukan",
+    tone: "bg-slate-100 text-slate-700",
   },
   {
     label: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
     value: "Tahap 1",
     helper: "Antrean tahap pertama",
+    tone: "bg-amber-50 text-amber-800",
   },
   {
     label: LETTER_STATUS.NEEDS_REVISION,
     value: "Tahap 2",
     helper: "Menunggu penyusun",
+    tone: "bg-rose-50 text-rose-800",
   },
   {
     label: LETTER_STATUS.WAITING_HEAD_CORRECTION,
     value: "Tahap 3",
     helper: "Validasi akhir",
+    tone: "bg-sky-50 text-sky-800",
   },
 ];
 
@@ -82,16 +86,16 @@ export default async function Home() {
 
   return (
     <AppShell>
-      <main className="min-h-screen bg-[linear-gradient(180deg,hsl(var(--muted))_0%,hsl(var(--background))_32rem)]">
+      <main className="min-h-screen">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-5 py-6 sm:px-6 lg:py-8">
-          <section className="border-b pb-6">
+          <section className="rounded-lg border bg-card p-6 shadow-sm">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="max-w-3xl">
-                <div className="inline-flex items-center gap-2 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+                <div className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
                   <ClipboardCheck className="h-4 w-4" aria-hidden="true" />
                   SIKAWAL MVP
                 </div>
-                <h1 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight tracking-normal text-foreground sm:text-4xl">
+                <h1 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl">
                   Kendali koreksi internal, snapshot, dan audit naskah.
                 </h1>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
@@ -114,24 +118,26 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3 border-t pt-5 md:grid-cols-3">
-              {evidenceItems.map((item) => {
-                const Icon = item.icon;
+            <div className="mt-6 rounded-lg bg-muted/40 p-4">
+              <div className="grid gap-3 md:grid-cols-3">
+                {evidenceItems.map((item) => {
+                  const Icon = item.icon;
 
-                return (
-                  <div className="flex items-start gap-3" key={item.label}>
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted text-primary">
-                      <Icon className="h-4 w-4" aria-hidden="true" />
+                  return (
+                    <div className="flex items-start gap-3" key={item.label}>
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background text-primary shadow-sm">
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{item.label}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {item.value}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium">{item.label}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {item.value}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </section>
 
@@ -141,15 +147,17 @@ export default async function Home() {
                 className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
                 key={item.label}
               >
-                <p className="min-h-10 text-sm font-medium text-muted-foreground">
+                <p className="min-h-[3rem] text-sm font-medium leading-6 text-muted-foreground">
                   {item.label}
                 </p>
-                <div className="mt-3 flex items-end justify-between gap-3">
-                  <p className="text-3xl font-semibold">{item.value}</p>
-                  <p className="text-right text-xs text-muted-foreground">
-                    {item.helper}
-                  </p>
-                </div>
+                <p className="mt-3 text-3xl font-semibold tracking-tight">
+                  {item.value}
+                </p>
+                <span
+                  className={`mt-3 inline-flex w-fit rounded-md px-2.5 py-1 text-xs font-medium ${item.tone}`}
+                >
+                  {item.helper}
+                </span>
               </div>
             ))}
           </section>
@@ -168,7 +176,7 @@ export default async function Home() {
               </div>
 
               <div className="mt-6 grid gap-5">
-                <div className="bg-muted/40 p-5">
+                <div className="rounded-lg bg-muted/40 p-5">
                   <p className="text-sm font-medium">
                     Belum ada dokumen aktif.
                   </p>
@@ -202,7 +210,7 @@ export default async function Home() {
                     Alur bukti dari draft sampai final.
                   </p>
                 </div>
-                <span className="rounded-md bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground">
+                <span className="rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
                   Immutable
                 </span>
               </div>

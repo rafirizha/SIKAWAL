@@ -148,22 +148,26 @@ export function HeadCorrectionQueue({ items }: HeadCorrectionQueueProps) {
               roundLabel={`Putaran ${letter.revisionRound}`}
             />
             <div className="grid gap-3 lg:grid-cols-2">
-              <details className="rounded-md border bg-background p-4" open>
-                <summary className="cursor-pointer text-sm font-semibold">
-                  Minta Revisi
-                </summary>
+              <section className="rounded-md border bg-background p-4">
+                <h4 className="text-sm font-semibold">Minta Revisi</h4>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Gunakan jika Kepala BPS masih memberi koreksi akhir.
+                </p>
                 <div className="mt-4">
                   <HeadCorrectionForm letter={letter} />
                 </div>
-              </details>
-              <details className="rounded-md border bg-background p-4">
-                <summary className="cursor-pointer text-sm font-semibold">
+              </section>
+              <section className="rounded-md border bg-emerald-50/50 p-4">
+                <h4 className="text-sm font-semibold text-emerald-900">
                   Setujui Internal
-                </summary>
+                </h4>
+                <p className="mt-1 text-xs leading-5 text-emerald-800">
+                  Gunakan jika dokumen sudah layak difinalisasi.
+                </p>
                 <div className="mt-4">
                   <ApproveInternalForm letter={letter} />
                 </div>
-              </details>
+              </section>
             </div>
           </article>
         ))}

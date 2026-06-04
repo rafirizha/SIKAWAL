@@ -1,7 +1,8 @@
 import "server-only";
 
+import { canViewLetter } from "@/lib/permissions/letter-permissions";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service-role-client";
-import { LETTER_STATUS, USER_ROLE } from "@/lib/workflow/constants";
+import { LETTER_STATUS } from "@/lib/workflow/constants";
 import { getLatestStoredDocumentMap } from "@/server/queries/letter-working-documents";
 import type {
   DomainUser,
@@ -184,25 +185,24 @@ export async function getEmployeeStatusItems(
   }
 
   const supabase = createSupabaseServiceRoleClient();
-  let query = supabase
+  const { data, error } = await supabase
     .from("letters")
     .select(
       "id, subject, recipient, letter_date, creator_user_id, team_id, status, current_reviewer_role, revision_target_role, revision_round, google_doc_url, updated_at",
-    );
-
-  if (currentUser.role !== USER_ROLE.ADMIN) {
-    query = query.eq("creator_user_id", currentUser.id);
-  }
-
-  const { data, error } = await query.order("updated_at", {
-    ascending: false,
-  });
+    )
+    .order("updated_at", { ascending: false });
 
   if (error) {
     throw new Error("Status dokumen belum bisa dibaca.");
   }
 
-  const rows = (data ?? []) as EmployeeStatusLetterRow[];
+  const rows = ((data ?? []) as EmployeeStatusLetterRow[]).filter((row) =>
+    canViewLetter(currentUser, {
+      creatorUserId: row.creator_user_id,
+      teamId: row.team_id,
+      status: row.status as LetterStatus,
+    }),
+  );
   const [teamNameMap, storedDocumentMap, latestVersionMap] = await Promise.all([
     getTeamNameMap(uniqueValues(rows.map((row) => row.team_id))),
     getLatestStoredDocumentMap(rows.map((row) => row.id)),

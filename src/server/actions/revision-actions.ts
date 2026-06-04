@@ -149,6 +149,7 @@ export async function submitRevisionAction(
 
     shouldCleanupUploadedRevision = false;
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
 
     return {
       status: "success",

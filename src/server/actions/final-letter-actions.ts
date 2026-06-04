@@ -174,6 +174,7 @@ export async function createFinalLetterAction(
 
     shouldCleanupUploadedFinalDocument = false;
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
     revalidatePath(`/letters/${parsedInput.data.letterId}`);
 
     return {
@@ -254,6 +255,7 @@ export async function cancelLetterAction(
     }
 
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
     revalidatePath(`/letters/${parsedInput.data.letterId}`);
 
     return {

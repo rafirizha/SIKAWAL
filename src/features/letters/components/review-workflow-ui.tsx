@@ -5,6 +5,7 @@ import { ExternalLink, Eye, FileText, Inbox, UploadCloud } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
+import { LETTER_STATUS } from "@/lib/workflow/constants";
 import { cn } from "@/lib/utils";
 
 export type ReviewQueueItem = {
@@ -66,6 +67,17 @@ type FileInputFieldProps = {
   required?: boolean;
 };
 
+const statusTone: Record<string, string> = {
+  [LETTER_STATUS.DRAFT]: "bg-slate-100 text-slate-700",
+  [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]:
+    "bg-amber-50 text-amber-800",
+  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-50 text-rose-800",
+  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-50 text-sky-800",
+  [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-50 text-emerald-800",
+  [LETTER_STATUS.FINAL]: "bg-green-50 text-green-800",
+  [LETTER_STATUS.CANCELED]: "bg-zinc-100 text-zinc-700",
+};
+
 export function FieldError({ errors, id }: FieldErrorProps) {
   if (!errors?.length) {
     return null;
@@ -122,7 +134,7 @@ export function QueueHeader({ count, description, title }: QueueHeaderProps) {
           {description}
         </p>
       </div>
-      <span className="inline-flex w-fit shrink-0 items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
+      <span className="inline-flex w-fit shrink-0 items-center rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
         {count} dokumen
       </span>
     </div>
@@ -173,7 +185,12 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
             <p className="min-w-0 break-words text-sm font-medium text-muted-foreground">
               {letter.teamName}
             </p>
-            <span className="max-w-full rounded-md bg-muted px-2 py-1 text-xs font-medium leading-5 text-muted-foreground">
+            <span
+              className={cn(
+                "max-w-full rounded-md px-2 py-1 text-xs font-medium leading-5",
+                statusTone[letter.status] ?? "bg-muted text-muted-foreground",
+              )}
+            >
               {letter.status}
             </span>
           </div>
@@ -205,7 +222,7 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
         </div>
 
         <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:max-w-sm xl:justify-end">
-          <span className="shrink-0 rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground">
+          <span className="shrink-0 rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
             {roundLabel}
           </span>
           <Button asChild size="sm" variant="outline">
@@ -289,7 +306,7 @@ export function FileInputField({
           accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           aria-describedby={describedBy || undefined}
           aria-invalid={Boolean(errors?.length)}
-          className="min-h-10 w-full rounded-md border bg-background py-2 pl-9 pr-3 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-secondary-foreground focus:ring-2 focus:ring-ring"
+          className="min-h-10 w-full rounded-md border bg-muted/20 py-2 pl-9 pr-3 text-sm transition-colors file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-secondary-foreground focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           id={id}
           name={name}
           required={required}

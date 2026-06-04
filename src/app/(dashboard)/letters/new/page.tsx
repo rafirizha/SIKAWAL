@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { AppShell } from "@/components/layout/app-shell";
-import { LogoutButton } from "@/features/auth/components/logout-button";
 import { DraftLetterForm } from "@/features/letters/components/draft-letter-form";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
@@ -32,22 +30,23 @@ export default async function NewLetterPage() {
     currentUser.role === USER_ROLE.ADMIN ? await getTeamOptions() : [];
 
   return (
-    <AppShell>
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-6 py-8">
-        <section className="border-b pb-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Draft</p>
-              <h1 className="mt-2 text-2xl font-semibold">Buat Draft Naskah</h1>
-            </div>
-            <LogoutButton />
-          </div>
-        </section>
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-6 py-8">
+      <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <div>
+          <p className="text-sm font-medium text-primary">Draft</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+            Buat Draft Naskah
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Isi metadata naskah, tautkan Google Docs jika ada, lalu simpan atau
+            ajukan ke Kasubbag Umum.
+          </p>
+        </div>
+      </section>
 
-        <section className="rounded-lg border bg-card p-5">
-          <DraftLetterForm teamOptions={teamOptions} />
-        </section>
-      </main>
-    </AppShell>
+      <section className="rounded-lg border bg-card p-5 shadow-sm">
+        <DraftLetterForm teamOptions={teamOptions} />
+      </section>
+    </main>
   );
 }

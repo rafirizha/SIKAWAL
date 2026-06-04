@@ -308,6 +308,7 @@ export async function completeHeadCorrectionAction(
     shouldCleanupUploadedSnapshot = false;
     snapshotJobFinalized = true;
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
 
     return {
       status: "success",
@@ -400,6 +401,7 @@ export async function approveInternalAction(
     }
 
     revalidatePath("/dashboard");
+    revalidatePath("/letters");
 
     return {
       status: "success",

@@ -15,7 +15,7 @@ function LoginButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button className="w-full" disabled={pending} type="submit">
+    <Button className="w-full shadow-sm" disabled={pending} type="submit">
       {pending ? "Masuk..." : "Masuk"}
     </Button>
   );
@@ -37,7 +37,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
         </label>
         <input
           autoComplete="email"
-          className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="h-10 rounded-md border bg-muted/20 px-3 text-sm transition-colors focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           id="email"
           name="email"
           required
@@ -51,7 +51,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
         </label>
         <input
           autoComplete="current-password"
-          className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="h-10 rounded-md border bg-muted/20 px-3 text-sm transition-colors focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           id="password"
           name="password"
           required
@@ -60,7 +60,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
       </div>
 
       {state.message ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div className="rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm leading-6 text-destructive">
           {state.message}
         </div>
       ) : null}

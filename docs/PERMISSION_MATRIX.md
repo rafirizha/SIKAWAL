@@ -34,7 +34,7 @@ Admin
 | Selesai koreksi tahap Kepala BPS    | Tidak                            | Tidak                               | Ya                | Ya    |
 | Menyetujui internal                 | Tidak                            | Tidak                               | Ya                | Ya    |
 | Mengirim hasil revisi               | Ya, milik sendiri                | Ya, milik sendiri                   | Tidak             | Ya    |
-| Upload naskah final                 | Ya, milik sendiri jika disetujui | Ya, milik sendiri jika disetujui    | Ya                | Ya    |
+| Upload naskah final                 | Ya, milik sendiri jika disetujui | Ya, milik sendiri jika disetujui    | Tidak             | Ya    |
 | Membatalkan dokumen                 | Ya, sebelum final                | Ya, sebelum Kepala BPS untuk timnya | Ya, sebelum final | Ya    |
 | Melihat audit trail                 | Terbatas milik sendiri           | Terbatas timnya                     | Ya                | Ya    |
 | Mengelola user/role/tim             | Tidak                            | Tidak                               | Tidak             | Ya    |

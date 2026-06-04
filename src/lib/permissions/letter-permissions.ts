@@ -170,9 +170,7 @@ export function canCreateFinalVersion(
   if (!isActive(user)) return false;
   if (letter.status !== LETTER_STATUS.INTERNALLY_APPROVED) return false;
 
-  return (
-    isAdmin(user) || hasRole(user, USER_ROLE.HEAD) || isOwner(user, letter)
-  );
+  return isAdmin(user) || isOwner(user, letter);
 }
 
 export function canCancelLetter(
