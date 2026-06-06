@@ -3,6 +3,8 @@
 import { Ban, FileCheck2 } from "lucide-react";
 import { useActionState } from "react";
 
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   ActionMessage,
   FieldError,
@@ -45,10 +47,9 @@ export function FinalLetterForm({
           >
             Link Google Docs Final
           </label>
-          <input
+          <Input
             aria-describedby={`finalGoogleDocUrl-${letterId}-hint finalGoogleDocUrl-${letterId}-error`}
             aria-invalid={Boolean(state.fieldErrors?.googleDocUrl)}
-            className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             defaultValue={defaultGoogleDocUrl ?? ""}
             id={`finalGoogleDocUrl-${letterId}`}
             name="googleDocUrl"
@@ -82,10 +83,9 @@ export function FinalLetterForm({
           >
             Catatan Final Internal
           </label>
-          <textarea
+          <Textarea
             aria-describedby={`finalSummary-${letterId}-hint finalSummary-${letterId}-error`}
             aria-invalid={Boolean(state.fieldErrors?.finalSummary)}
-            className="min-h-24 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             id={`finalSummary-${letterId}`}
             maxLength={1000}
             name="finalSummary"
@@ -134,10 +134,9 @@ export function CancelLetterForm({ letterId }: CancelLetterFormProps) {
         >
           Alasan Pembatalan
         </label>
-        <textarea
+        <Textarea
           aria-describedby={`cancelReason-${letterId}-hint cancelReason-${letterId}-error`}
           aria-invalid={Boolean(state.fieldErrors?.cancelReason)}
-          className="min-h-24 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           id={`cancelReason-${letterId}`}
           maxLength={1000}
           name="cancelReason"

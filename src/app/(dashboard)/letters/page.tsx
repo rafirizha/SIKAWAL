@@ -19,12 +19,21 @@ import {
   getRevisionQueue,
 } from "@/server/queries/review-workflow-queries";
 
-export default async function LettersPage() {
+type LettersPageProps = {
+  searchParams?: Promise<{ status?: string | string[] }>;
+};
+
+export default async function LettersPage({ searchParams }: LettersPageProps) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
     redirect("/login");
   }
+
+  const resolvedSearchParams = await searchParams;
+  const statusParam = Array.isArray(resolvedSearchParams?.status)
+    ? resolvedSearchParams?.status[0]
+    : resolvedSearchParams?.status;
 
   const [
     documents,
@@ -63,7 +72,7 @@ export default async function LettersPage() {
           {canStartDraft ? (
             <Button asChild>
               <Link href="/letters/new">
-                <Plus className="h-4 w-4" aria-hidden={true} />
+                <Plus className="h-4 w-4" aria-hidden="true" />
                 Buat Draft
               </Link>
             </Button>
@@ -103,7 +112,7 @@ export default async function LettersPage() {
         )}
       </section>
 
-      <EmployeeStatusTable items={documents} />
+      <EmployeeStatusTable initialStatus={statusParam} items={documents} />
     </main>
   );
 }

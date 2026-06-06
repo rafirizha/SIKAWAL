@@ -3,6 +3,7 @@
 import { CheckCircle2, FileCheck2 } from "lucide-react";
 import { useActionState } from "react";
 
+import { Textarea } from "@/components/ui/textarea";
 import {
   ActionMessage,
   FieldError,
@@ -48,10 +49,9 @@ function HeadCorrectionForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
           >
             Catatan Koreksi
           </label>
-          <textarea
+          <Textarea
             aria-describedby={`headCorrectionNotes-${letter.id}-error`}
             aria-invalid={Boolean(state.fieldErrors?.notes)}
-            className="min-h-24 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             id={`headCorrectionNotes-${letter.id}`}
             maxLength={1000}
             name="notes"
@@ -92,10 +92,10 @@ function ApproveInternalForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
         >
           Catatan Persetujuan
         </label>
-        <textarea
+        <Textarea
           aria-describedby={`approveInternalNotes-${letter.id}-hint approveInternalNotes-${letter.id}-error`}
           aria-invalid={Boolean(state.fieldErrors?.notes)}
-          className="min-h-20 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="min-h-20"
           id={`approveInternalNotes-${letter.id}`}
           maxLength={1000}
           name="notes"

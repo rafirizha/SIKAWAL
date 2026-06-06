@@ -48,7 +48,7 @@ export default async function ProfilePage() {
       <section className="rounded-lg border bg-card p-6 shadow-sm">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <UserCircle className="h-7 w-7" aria-hidden={true} />
+            <UserCircle className="h-7 w-7" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <h2 className="break-words text-xl font-semibold">
@@ -66,7 +66,7 @@ export default async function ProfilePage() {
         <dl className="mt-6 grid gap-4 border-t pt-5 text-sm sm:grid-cols-3">
           <div className="rounded-lg bg-muted/40 p-4">
             <dt className="flex items-center gap-2 font-medium">
-              <Mail className="h-4 w-4 text-primary" aria-hidden={true} />
+              <Mail className="h-4 w-4 text-primary" aria-hidden="true" />
               Email
             </dt>
             <dd className="mt-2 break-words text-muted-foreground">
@@ -77,7 +77,7 @@ export default async function ProfilePage() {
             <dt className="flex items-center gap-2 font-medium">
               <ShieldCheck
                 className="h-4 w-4 text-primary"
-                aria-hidden={true}
+                aria-hidden="true"
               />
               Role
             </dt>
@@ -87,7 +87,7 @@ export default async function ProfilePage() {
           </div>
           <div className="rounded-lg bg-muted/40 p-4">
             <dt className="flex items-center gap-2 font-medium">
-              <Users className="h-4 w-4 text-primary" aria-hidden={true} />
+              <Users className="h-4 w-4 text-primary" aria-hidden="true" />
               Tim
             </dt>
             <dd className="mt-2 break-words text-muted-foreground">

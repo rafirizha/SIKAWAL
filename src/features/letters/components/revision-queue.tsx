@@ -3,6 +3,8 @@
 import { FileCheck2 } from "lucide-react";
 import { useActionState } from "react";
 
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   ActionMessage,
   FieldError,
@@ -37,10 +39,9 @@ function RevisionForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
           >
             Link Google Docs Revisi
           </label>
-          <input
+          <Input
             aria-describedby={`revisionGoogleDocUrl-${letter.id}-error`}
             aria-invalid={Boolean(state.fieldErrors?.googleDocUrl)}
-            className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             defaultValue={letter.googleDocUrl ?? ""}
             id={`revisionGoogleDocUrl-${letter.id}`}
             name="googleDocUrl"
@@ -68,10 +69,9 @@ function RevisionForm({ letter }: { letter: ReviewWorkflowQueueItem }) {
           >
             Ringkasan Perubahan
           </label>
-          <textarea
+          <Textarea
             aria-describedby={`changeSummary-${letter.id}-hint changeSummary-${letter.id}-error`}
             aria-invalid={Boolean(state.fieldErrors?.changeSummary)}
-            className="min-h-24 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             id={`changeSummary-${letter.id}`}
             maxLength={1000}
             name="changeSummary"

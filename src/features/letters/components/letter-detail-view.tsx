@@ -1,13 +1,8 @@
-import Link from "next/link";
-import {
-  ArrowLeft,
-  ExternalLink,
-  FileText,
-  History,
-  ShieldCheck,
-} from "lucide-react";
+import { ExternalLink, FileText, History, ShieldCheck } from "lucide-react";
 
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   CancelLetterForm,
   FinalLetterForm,
@@ -149,12 +144,7 @@ export function LetterDetailView({ detail }: LetterDetailViewProps) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-5 py-6 sm:px-6 sm:py-8">
       <div>
-        <Button asChild size="sm" variant="ghost">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Dashboard
-          </Link>
-        </Button>
+        <BackButton fallbackHref="/letters" />
       </div>
 
       <section className="border-b pb-6">
@@ -171,9 +161,10 @@ export function LetterDetailView({ detail }: LetterDetailViewProps) {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground">
-              {detail.status}
-            </span>
+            <StatusBadge
+              className="px-3 py-2 text-sm font-semibold"
+              status={detail.status}
+            />
             {detail.googleDocUrl ? (
               <Button asChild size="sm" variant="outline">
                 <a href={detail.googleDocUrl} rel="noreferrer" target="_blank">

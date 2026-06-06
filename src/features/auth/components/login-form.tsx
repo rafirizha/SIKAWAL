@@ -4,6 +4,8 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
+import { FormMessage } from "@/components/ui/form-message";
+import { Input } from "@/components/ui/input";
 import { initialAuthActionState } from "@/lib/forms/action-states";
 import { loginAction } from "@/server/actions/auth-actions";
 
@@ -35,23 +37,15 @@ export function LoginForm({ nextPath }: LoginFormProps) {
         <label className="text-sm font-medium" htmlFor="email">
           Email
         </label>
-        <input
-          autoComplete="email"
-          className="h-10 rounded-md border bg-muted/20 px-3 text-sm transition-colors focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-          id="email"
-          name="email"
-          required
-          type="email"
-        />
+        <Input autoComplete="email" id="email" name="email" required type="email" />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium" htmlFor="password">
           Password
         </label>
-        <input
+        <Input
           autoComplete="current-password"
-          className="h-10 rounded-md border bg-muted/20 px-3 text-sm transition-colors focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
           id="password"
           name="password"
           required
@@ -59,11 +53,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
         />
       </div>
 
-      {state.message ? (
-        <div className="rounded-md border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm leading-6 text-destructive">
-          {state.message}
-        </div>
-      ) : null}
+      <FormMessage message={state.message} status={state.status} />
 
       <LoginButton />
     </form>

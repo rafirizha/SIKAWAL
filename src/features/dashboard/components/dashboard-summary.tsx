@@ -3,6 +3,7 @@ import {
   ArrowRight,
   BarChart3,
   FileText,
+  Inbox,
   Sparkles,
   Target,
   TimerReset,
@@ -10,9 +11,19 @@ import {
 import type { ComponentType } from "react";
 
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { LETTER_STATUS } from "@/lib/workflow/constants";
+import { statusBarTone } from "@/lib/workflow/status-style";
 import { cn } from "@/lib/utils";
 import type { EmployeeStatusItem } from "@/server/queries/employee-status-queries";
+
+export type DashboardTask = {
+  id: string;
+  subject: string;
+  teamName: string;
+  status: string;
+  actionLabel: string;
+};
 
 type DashboardSummaryProps = {
   activeReviewCount: number;
@@ -22,6 +33,7 @@ type DashboardSummaryProps = {
   currentUserRole: string;
   draftCount: number;
   finalCount: number;
+  myTasks: DashboardTask[];
   needsRevisionCount: number;
   recentDocuments: EmployeeStatusItem[];
   totalDocuments: number;
@@ -29,18 +41,21 @@ type DashboardSummaryProps = {
   waitingHeadCount: number;
 };
 
-type StatusBar = {
-  count: number;
-  fillClass: string;
-  label: string;
-};
-
 type OverviewStat = {
   hint: string;
-  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  href?: string;
+  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
   label: string;
   tone: string;
   value: number | string;
+};
+
+type DistributionRow = {
+  count: number;
+  hint: string;
+  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
+  label: string;
+  status: string;
 };
 
 const formatDateTime = (value: string) =>
@@ -49,39 +64,8 @@ const formatDateTime = (value: string) =>
     timeStyle: "short",
   }).format(new Date(value));
 
-const statusBarTone: Record<string, string> = {
-  [LETTER_STATUS.DRAFT]: "bg-slate-500",
-  [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]: "bg-amber-500",
-  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-500",
-  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-500",
-  [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-500",
-  [LETTER_STATUS.FINAL]: "bg-green-500",
-  [LETTER_STATUS.CANCELED]: "bg-zinc-400",
-};
-
-const recentTone: Record<string, string> = {
-  [LETTER_STATUS.DRAFT]: "bg-slate-100 text-slate-700",
-  [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]:
-    "bg-amber-50 text-amber-800",
-  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-50 text-rose-800",
-  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-50 text-sky-800",
-  [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-50 text-emerald-800",
-  [LETTER_STATUS.FINAL]: "bg-green-50 text-green-800",
-  [LETTER_STATUS.CANCELED]: "bg-zinc-100 text-zinc-700",
-};
-
-function StatusChip({ status }: { status: string }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex rounded-md px-2.5 py-1 text-xs font-medium leading-5",
-        recentTone[status] ?? "bg-muted text-muted-foreground",
-      )}
-    >
-      {status}
-    </span>
-  );
-}
+const lettersByStatusHref = (status: string) =>
+  `/letters?status=${encodeURIComponent(status)}#dokumen`;
 
 function OverviewRail({ stats }: { stats: OverviewStat[] }) {
   return (
@@ -89,12 +73,8 @@ function OverviewRail({ stats }: { stats: OverviewStat[] }) {
       <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {stats.map((stat) => {
           const Icon = stat.icon;
-
-          return (
-            <div
-              className="grid gap-3 px-4 py-4 sm:min-h-28 sm:content-start"
-              key={stat.label}
-            >
+          const inner = (
+            <>
               <dt className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 <span
                   className={cn(
@@ -102,7 +82,7 @@ function OverviewRail({ stats }: { stats: OverviewStat[] }) {
                     stat.tone,
                   )}
                 >
-                  <Icon className="h-4 w-4" aria-hidden={true} />
+                  <Icon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 {stat.label}
               </dt>
@@ -112,6 +92,23 @@ function OverviewRail({ stats }: { stats: OverviewStat[] }) {
               <p className="text-xs leading-5 text-muted-foreground">
                 {stat.hint}
               </p>
+            </>
+          );
+
+          return stat.href ? (
+            <Link
+              className="grid gap-3 px-4 py-4 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:min-h-28 sm:content-start"
+              href={stat.href}
+              key={stat.label}
+            >
+              {inner}
+            </Link>
+          ) : (
+            <div
+              className="grid gap-3 px-4 py-4 sm:min-h-28 sm:content-start"
+              key={stat.label}
+            >
+              {inner}
             </div>
           );
         })}
@@ -120,44 +117,89 @@ function OverviewRail({ stats }: { stats: OverviewStat[] }) {
   );
 }
 
-function WorkflowMetricList({
-  metrics,
-}: {
-  metrics: Array<{
-    hint: string;
-    icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-    label: string;
-    value: number;
-  }>;
-}) {
-  return (
-    <dl className="mt-5 divide-y overflow-hidden rounded-lg border bg-muted/20">
-      {metrics.map((metric) => {
-        const Icon = metric.icon;
+function TaskLaunchpad({ tasks }: { tasks: DashboardTask[] }) {
+  const taskCount = tasks.length;
 
-        return (
-          <div
-            className="grid gap-3 px-4 py-4 sm:grid-cols-[1fr_auto] sm:items-center"
-            key={metric.label}
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Icon className="h-4 w-4" aria-hidden={true} />
-              </div>
-              <div>
-                <dt className="text-sm font-medium">{metric.label}</dt>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  {metric.hint}
-                </p>
-              </div>
-            </div>
-            <dd className="text-left text-2xl font-semibold tracking-tight sm:text-right">
-              {metric.value}
-            </dd>
+  return (
+    <div className="flex h-full flex-col rounded-lg border bg-card p-6 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-primary">Langkah berikutnya</p>
+          <h2 className="mt-2 text-lg font-semibold">Tugas menunggu kamu</h2>
+        </div>
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-md px-3 py-1.5 text-sm font-medium",
+            taskCount > 0
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground",
+          )}
+        >
+          {taskCount} tugas
+        </span>
+      </div>
+
+      {taskCount > 0 ? (
+        <>
+          <ul className="mt-4 flex flex-col gap-2">
+            {tasks.slice(0, 4).map((task) => (
+              <li key={task.id}>
+                <Link
+                  className="group flex items-start justify-between gap-3 rounded-lg border bg-muted/20 px-3 py-2.5 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  href={`/letters/${task.id}`}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">
+                      {task.subject}
+                    </span>
+                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                      {task.actionLabel} - {task.teamName}
+                    </span>
+                  </span>
+                  <ArrowRight
+                    className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Button asChild>
+              <Link href="/letters#tugas-aktif">
+                Tinjau antrean ({taskCount})
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            {taskCount > 4 ? (
+              <Link
+                className="text-sm font-medium text-primary hover:underline"
+                href="/letters#tugas-aktif"
+              >
+                +{taskCount - 4} lainnya
+              </Link>
+            ) : null}
           </div>
-        );
-      })}
-    </dl>
+        </>
+      ) : (
+        <div className="mt-4 flex flex-1 flex-col items-start justify-center gap-3 rounded-lg border border-dashed bg-muted/20 p-5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+            <Inbox className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Tidak ada tugas yang menunggu aksimu. Semua naskah sudah
+            ditindaklanjuti.
+          </p>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/letters#dokumen">
+              <FileText className="h-4 w-4" aria-hidden="true" />
+              Lihat semua dokumen
+            </Link>
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -169,49 +211,17 @@ export function DashboardSummary({
   currentUserRole,
   draftCount,
   finalCount,
+  myTasks,
   needsRevisionCount,
   recentDocuments,
   totalDocuments,
   waitingGeneralCount,
   waitingHeadCount,
 }: DashboardSummaryProps) {
-  const statusBars: StatusBar[] = [
-    {
-      count: draftCount,
-      fillClass: statusBarTone[LETTER_STATUS.DRAFT],
-      label: "Draft",
-    },
-    {
-      count: waitingGeneralCount,
-      fillClass:
-        statusBarTone[LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION],
-      label: "Menunggu Kasubbag Umum",
-    },
-    {
-      count: needsRevisionCount,
-      fillClass: statusBarTone[LETTER_STATUS.NEEDS_REVISION],
-      label: "Perlu Revisi Pegawai",
-    },
-    {
-      count: waitingHeadCount,
-      fillClass: statusBarTone[LETTER_STATUS.WAITING_HEAD_CORRECTION],
-      label: "Menunggu Kepala BPS",
-    },
-    {
-      count: approvedCount,
-      fillClass: statusBarTone[LETTER_STATUS.INTERNALLY_APPROVED],
-      label: "Siap final",
-    },
-    {
-      count: finalCount,
-      fillClass: statusBarTone[LETTER_STATUS.FINAL],
-      label: "Final",
-    },
-  ];
-
   const overviewStats: OverviewStat[] = [
     {
       hint: "Masih bergerak di pipeline koreksi internal.",
+      href: "/letters#dokumen",
       icon: Sparkles,
       label: "Dokumen aktif",
       tone: "bg-primary/10 text-primary",
@@ -219,6 +229,7 @@ export function DashboardSummary({
     },
     {
       hint: "Termasuk draft, revisi, approval, dan final.",
+      href: "/letters#dokumen",
       icon: FileText,
       label: "Total dokumen",
       tone: "bg-slate-100 text-slate-700",
@@ -235,46 +246,55 @@ export function DashboardSummary({
     },
   ];
 
-  const workflowMetrics = [
+  const distribution: DistributionRow[] = [
     {
+      count: draftCount,
       hint: "Belum diajukan ke pemeriksa.",
       icon: FileText,
       label: "Draft",
-      value: draftCount,
+      status: LETTER_STATUS.DRAFT,
     },
     {
-      hint: "Menunggu pemeriksaan kasubbag umum.",
+      count: waitingGeneralCount,
+      hint: "Menunggu pemeriksaan Kasubbag Umum.",
       icon: Target,
       label: "Menunggu Kasubbag Umum",
-      value: waitingGeneralCount,
+      status: LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION,
     },
     {
+      count: needsRevisionCount,
       hint: "Kembali ke penyusun untuk diperbaiki.",
       icon: BarChart3,
       label: "Perlu Revisi",
-      value: needsRevisionCount,
+      status: LETTER_STATUS.NEEDS_REVISION,
     },
     {
-      hint: "Menunggu approval final dari kepala.",
+      count: waitingHeadCount,
+      hint: "Menunggu approval final dari Kepala BPS.",
       icon: TimerReset,
       label: "Menunggu Kepala BPS",
-      value: waitingHeadCount,
+      status: LETTER_STATUS.WAITING_HEAD_CORRECTION,
     },
     {
+      count: approvedCount,
       hint: "Siap difinalisasi setelah pemeriksaan internal.",
       icon: ArrowRight,
       label: "Siap final",
-      value: approvedCount,
+      status: LETTER_STATUS.INTERNALLY_APPROVED,
     },
     {
+      count: finalCount,
       hint: "Sudah terkunci sebagai hasil akhir.",
       icon: FileText,
       label: "Final",
-      value: finalCount,
+      status: LETTER_STATUS.FINAL,
     },
   ];
 
-  const maxCount = Math.max(1, ...statusBars.map((item) => item.count));
+  const distributionTotal = distribution.reduce(
+    (sum, row) => sum + row.count,
+    0,
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -287,9 +307,8 @@ export function DashboardSummary({
                 Ringkasan kerja
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                {currentUserName} - {currentUserRole}. Dashboard menampilkan
-                ringkasan angka, distribusi status, dan dokumen terbaru. Detail
-                pekerjaan tetap ada di Dokumen.
+                {currentUserName} - {currentUserRole}. Pantau apa yang menunggu
+                aksimu, lalu lihat distribusi status dan dokumen terbaru.
               </p>
             </div>
 
@@ -314,94 +333,68 @@ export function DashboardSummary({
           <OverviewRail stats={overviewStats} />
         </div>
 
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium text-primary">Profil aktif</p>
-              <h2 className="mt-2 text-lg font-semibold">Akun yang masuk</h2>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                Ringkas, supaya dashboard tetap fokus ke status kerja.
-              </p>
-            </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary">
-              <Target className="h-5 w-5" aria-hidden={true} />
-            </div>
-          </div>
-
-          <dl className="mt-5 space-y-3">
-            <div className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
-              <dt className="text-sm text-muted-foreground">Peran aktif</dt>
-              <dd className="text-sm font-semibold text-foreground">
-                {currentUserRole}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
-              <dt className="text-sm text-muted-foreground">
-                Fokus berikutnya
-              </dt>
-              <dd className="text-sm font-semibold text-foreground">
-                Cek Dokumen untuk detail kerja
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
-              <dt className="text-sm text-muted-foreground">Status pipeline</dt>
-              <dd className="text-sm font-semibold text-foreground">
-                {activeReviewCount} dokumen dalam alur
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <TaskLaunchpad tasks={myTasks} />
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">Ringkasan angka</h2>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                Angka ini cukup untuk membaca kondisi tanpa membuka daftar kerja
-                yang panjang.
-              </p>
-            </div>
+      <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">Distribusi status</h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Angka dan porsi tiap tahap. Klik baris untuk membuka daftar
+              dokumen yang sudah ter-filter.
+            </p>
           </div>
-
-          <WorkflowMetricList metrics={workflowMetrics} />
         </div>
 
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">Distribusi status</h2>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                Ringkasan visual dari pipeline naskah yang kamu akses.
-              </p>
-            </div>
-          </div>
+        <dl className="mt-5 grid gap-2">
+          {distribution.map((row) => {
+            const Icon = row.icon;
+            const widthPercent =
+              row.count === 0 || distributionTotal === 0
+                ? 0
+                : Math.max((row.count / distributionTotal) * 100, 4);
 
-          <div className="mt-5 grid gap-4">
-            {statusBars.map((item) => {
-              const widthPercent =
-                item.count === 0
-                  ? 0
-                  : Math.max((item.count / maxCount) * 100, 12);
-
-              return (
-                <div key={item.label}>
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <p className="font-medium">{item.label}</p>
-                    <span className="text-muted-foreground">{item.count}</span>
+            return (
+              <Link
+                className="group -mx-2 block rounded-lg px-2 py-2 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                href={lettersByStatusHref(row.status)}
+                key={row.label}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-sm font-medium group-hover:text-foreground">
+                        {row.label}
+                      </dt>
+                      <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                        {row.hint}
+                      </p>
+                    </div>
                   </div>
-                  <div className="mt-2 h-2 rounded-full bg-muted">
-                    <div
-                      className={cn("h-2 rounded-full", item.fillClass)}
-                      style={{ width: `${widthPercent}%` }}
+                  <dd className="flex items-center gap-2">
+                    <span className="text-2xl font-semibold tabular-nums tracking-tight">
+                      {row.count}
+                    </span>
+                    <ArrowRight
+                      className="h-4 w-4 text-muted-foreground opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
+                      aria-hidden="true"
                     />
-                  </div>
+                  </dd>
                 </div>
-              );
-            })}
-          </div>
-        </div>
+                <div className="mt-2 h-2 rounded-full bg-muted">
+                  <div
+                    className={cn("h-2 rounded-full", statusBarTone(row.status))}
+                    style={{ width: `${widthPercent}%` }}
+                  />
+                </div>
+              </Link>
+            );
+          })}
+        </dl>
       </section>
 
       <section className="rounded-lg border bg-card p-6 shadow-sm">
@@ -423,8 +416,9 @@ export function DashboardSummary({
         <div className="mt-5 grid gap-3">
           {recentDocuments.length ? (
             recentDocuments.slice(0, 5).map((item) => (
-              <article
-                className="rounded-lg border bg-muted/20 p-4 transition-colors hover:bg-muted/40"
+              <Link
+                className="group block rounded-lg border bg-muted/20 p-4 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                href={`/letters/${item.id}`}
                 key={item.id}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -434,14 +428,14 @@ export function DashboardSummary({
                       {item.teamName} - {item.currentStageLabel}
                     </p>
                   </div>
-                  <StatusChip status={item.status} />
+                  <StatusBadge status={item.status} />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-5 text-muted-foreground">
                   <span>{item.nextActionLabel}</span>
                   <span>-</span>
                   <span>{formatDateTime(item.updatedAt)}</span>
                 </div>
-              </article>
+              </Link>
             ))
           ) : (
             <div className="rounded-lg border bg-muted/30 p-5 text-sm leading-6 text-muted-foreground">

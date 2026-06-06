@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BookOpen,
   FileText,
   LayoutDashboard,
   PlusCircle,
@@ -15,7 +14,10 @@ import { cn } from "@/lib/utils";
 
 type NavigationItem = {
   href: string;
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  icon: React.ComponentType<{
+    className?: string;
+    "aria-hidden"?: boolean | "true" | "false";
+  }>;
   isActive: (pathname: string) => boolean;
   label: string;
 };
@@ -45,12 +47,6 @@ const baseNavigationItems: NavigationItem[] = [
     icon: UserCircle,
     isActive: (pathname) => pathname === "/profile",
     label: "Profil",
-  },
-  {
-    href: "/dashboard#panduan",
-    icon: BookOpen,
-    isActive: () => false,
-    label: "Panduan",
   },
 ];
 
@@ -96,7 +92,7 @@ export function AuthenticatedNav({
             href={item.href}
             key={item.href}
           >
-            <Icon className="h-4 w-4" aria-hidden={true} />
+            <Icon className="h-4 w-4" aria-hidden="true" />
             {item.label}
           </Link>
         );

@@ -5,27 +5,18 @@ import { ExternalLink, Eye, FileText, ListFilter, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   formatDate,
   formatDateTime,
 } from "@/features/letters/components/review-workflow-ui";
-import { LETTER_STATUS } from "@/lib/workflow/constants";
 import type { EmployeeStatusItem } from "@/server/queries/employee-status-queries";
-import type { LetterStatus } from "@/types/domain";
 
 type EmployeeStatusTableProps = {
   items: EmployeeStatusItem[];
-};
-
-const statusTone: Record<LetterStatus, string> = {
-  [LETTER_STATUS.DRAFT]: "bg-slate-100 text-slate-700",
-  [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]:
-    "bg-amber-50 text-amber-800",
-  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-50 text-rose-800",
-  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-50 text-sky-800",
-  [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-50 text-emerald-800",
-  [LETTER_STATUS.FINAL]: "bg-green-50 text-green-800",
-  [LETTER_STATUS.CANCELED]: "bg-zinc-100 text-zinc-700",
+  initialStatus?: string;
 };
 
 function normalizeSearchValue(value: string) {
@@ -57,16 +48,6 @@ function getVersionLabel(item: EmployeeStatusItem) {
   }
 
   return `v${item.latestVersionNumber} - ${item.latestVersionTitle}`;
-}
-
-function StatusBadge({ status }: { status: LetterStatus }) {
-  return (
-    <span
-      className={`inline-flex max-w-full rounded-md px-2.5 py-1 text-xs font-medium leading-5 ${statusTone[status]}`}
-    >
-      {status}
-    </span>
-  );
 }
 
 function DocumentActions({ item }: { item: EmployeeStatusItem }) {
@@ -103,12 +84,19 @@ function DocumentActions({ item }: { item: EmployeeStatusItem }) {
   );
 }
 
-export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
+export function EmployeeStatusTable({
+  items,
+  initialStatus,
+}: EmployeeStatusTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
   const statusOptions = useMemo(
     () => Array.from(new Set(items.map((item) => item.status))),
     [items],
+  );
+  const [selectedStatus, setSelectedStatus] = useState(() =>
+    initialStatus && statusOptions.some((option) => option === initialStatus)
+      ? initialStatus
+      : "all",
   );
   const filteredItems = useMemo(() => {
     const normalizedQuery = normalizeSearchValue(searchQuery);
@@ -146,8 +134,8 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
               className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground"
               aria-hidden="true"
             />
-            <input
-              className="h-10 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            <Input
+              className="pl-9"
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Cari perihal, status, tujuan, atau tim"
               type="search"
@@ -161,8 +149,8 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
               className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground"
               aria-hidden="true"
             />
-            <select
-              className="h-10 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            <Select
+              className="pl-9"
               onChange={(event) => setSelectedStatus(event.target.value)}
               value={selectedStatus}
             >
@@ -172,7 +160,7 @@ export function EmployeeStatusTable({ items }: EmployeeStatusTableProps) {
                   {status}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { FileCheck2 } from "lucide-react";
 import { useActionState } from "react";
 
+import { Textarea } from "@/components/ui/textarea";
 import {
   ActionMessage,
   FieldError,
@@ -46,10 +47,10 @@ function ForwardToHeadForm({
         >
           Catatan Persetujuan
         </label>
-        <textarea
+        <Textarea
           aria-describedby={`forwardNotes-${letter.id}-hint forwardNotes-${letter.id}-error`}
           aria-invalid={Boolean(state.fieldErrors?.notes)}
-          className="min-h-20 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="min-h-20"
           id={`forwardNotes-${letter.id}`}
           maxLength={1000}
           name="notes"
@@ -111,10 +112,9 @@ function RequestRevisionForm({
           <label className="text-sm font-medium" htmlFor={`notes-${letter.id}`}>
             Catatan
           </label>
-          <textarea
+          <Textarea
             aria-describedby={`notes-${letter.id}-error`}
             aria-invalid={Boolean(state.fieldErrors?.notes)}
-            className="min-h-24 resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             id={`notes-${letter.id}`}
             maxLength={1000}
             name="notes"

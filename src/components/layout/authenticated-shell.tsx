@@ -20,12 +20,18 @@ export function AuthenticatedShell({
 
   return (
     <AppShell>
+      <a
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow"
+        href="#main-content"
+      >
+        Lewati ke konten
+      </a>
       <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="hidden border-r bg-card/95 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
           <div className="border-b px-5 py-5">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <ClipboardCheck className="h-5 w-5" aria-hidden={true} />
+                <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold">SIKAWAL</p>
@@ -61,7 +67,7 @@ export function AuthenticatedShell({
           </div>
         </aside>
 
-        <div className="min-w-0">
+        <div className="min-w-0" id="main-content">
           <header className="sticky top-0 z-20 border-b bg-background/95 px-5 py-3 backdrop-blur lg:hidden">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">

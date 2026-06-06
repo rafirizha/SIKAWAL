@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { ExternalLink, Eye, FileText, Inbox, UploadCloud } from "lucide-react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
-import { LETTER_STATUS } from "@/lib/workflow/constants";
-import { cn } from "@/lib/utils";
+import { FormMessage } from "@/components/ui/form-message";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 export type ReviewQueueItem = {
   id: string;
@@ -67,17 +68,6 @@ type FileInputFieldProps = {
   required?: boolean;
 };
 
-const statusTone: Record<string, string> = {
-  [LETTER_STATUS.DRAFT]: "bg-slate-100 text-slate-700",
-  [LETTER_STATUS.WAITING_GENERAL_SUBDIVISION_CORRECTION]:
-    "bg-amber-50 text-amber-800",
-  [LETTER_STATUS.NEEDS_REVISION]: "bg-rose-50 text-rose-800",
-  [LETTER_STATUS.WAITING_HEAD_CORRECTION]: "bg-sky-50 text-sky-800",
-  [LETTER_STATUS.INTERNALLY_APPROVED]: "bg-emerald-50 text-emerald-800",
-  [LETTER_STATUS.FINAL]: "bg-green-50 text-green-800",
-  [LETTER_STATUS.CANCELED]: "bg-zinc-100 text-zinc-700",
-};
-
 export function FieldError({ errors, id }: FieldErrorProps) {
   if (!errors?.length) {
     return null;
@@ -91,24 +81,7 @@ export function FieldError({ errors, id }: FieldErrorProps) {
 }
 
 export function ActionMessage({ message, status }: ActionMessageProps) {
-  if (!message) {
-    return null;
-  }
-
-  return (
-    <div
-      aria-live="polite"
-      className={cn(
-        "rounded-md border px-4 py-3 text-sm",
-        status === "success"
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-red-200 bg-red-50 text-red-800",
-      )}
-      role={status === "error" ? "alert" : "status"}
-    >
-      {message}
-    </div>
-  );
+  return <FormMessage message={message} status={status} />;
 }
 
 export function SubmitButton({
@@ -185,14 +158,7 @@ export function LetterSummary<TLetter extends ReviewQueueItem>({
             <p className="min-w-0 break-words text-sm font-medium text-muted-foreground">
               {letter.teamName}
             </p>
-            <span
-              className={cn(
-                "max-w-full rounded-md px-2 py-1 text-xs font-medium leading-5",
-                statusTone[letter.status] ?? "bg-muted text-muted-foreground",
-              )}
-            >
-              {letter.status}
-            </span>
+            <StatusBadge status={letter.status} />
           </div>
           <h3 className="mt-2 break-words text-xl font-semibold leading-7">
             {letter.subject}
@@ -286,6 +252,7 @@ export function FileInputField({
   name,
   required = false,
 }: FileInputFieldProps) {
+  const [fileName, setFileName] = useState<string | null>(null);
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
   const describedBy = [hint ? hintId : null, errors?.length ? errorId : null]
@@ -297,21 +264,30 @@ export function FileInputField({
       <label className="text-sm font-medium" htmlFor={id}>
         {label}
       </label>
-      <div className="relative">
-        <UploadCloud
-          className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground"
-          aria-hidden="true"
-        />
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
         <input
           accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           aria-describedby={describedBy || undefined}
           aria-invalid={Boolean(errors?.length)}
-          className="min-h-10 w-full rounded-md border bg-muted/20 py-2 pl-9 pr-3 text-sm transition-colors file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-secondary-foreground focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="peer sr-only"
           id={id}
           name={name}
+          onChange={(event) =>
+            setFileName(event.target.files?.[0]?.name ?? null)
+          }
           required={required}
           type="file"
         />
+        <label
+          className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-muted peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
+          htmlFor={id}
+        >
+          <UploadCloud className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          Pilih file
+        </label>
+        <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+          {fileName ?? "Belum ada file dipilih"}
+        </span>
       </div>
       {hint ? (
         <p className="text-xs leading-5 text-muted-foreground" id={hintId}>
