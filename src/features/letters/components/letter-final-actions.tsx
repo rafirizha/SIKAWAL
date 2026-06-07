@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   ActionMessage,
+  ConfirmSubmitButton,
   FieldError,
   FileInputField,
-  SubmitButton,
 } from "@/features/letters/components/review-workflow-ui";
 import { initialCorrectionActionState } from "@/lib/forms/action-states";
 import {
@@ -108,10 +108,13 @@ export function FinalLetterForm({
       <ActionMessage message={state.message} status={state.status} />
 
       <div className="flex justify-end">
-        <SubmitButton pendingChildren="Membuat final...">
+        <ConfirmSubmitButton
+          confirmHint="Versi final dikunci sebagai hasil akhir."
+          pendingChildren="Membuat final..."
+        >
           <FileCheck2 className="h-4 w-4" aria-hidden="true" />
           Buat Final Internal
-        </SubmitButton>
+        </ConfirmSubmitButton>
       </div>
     </form>
   );
@@ -158,10 +161,14 @@ export function CancelLetterForm({ letterId }: CancelLetterFormProps) {
       <ActionMessage message={state.message} status={state.status} />
 
       <div className="flex justify-end">
-        <SubmitButton pendingChildren="Membatalkan..." variant="outline">
+        <ConfirmSubmitButton
+          confirmHint="Pembatalan bersifat terminal dan tercatat di audit."
+          pendingChildren="Membatalkan..."
+          variant="outline"
+        >
           <Ban className="h-4 w-4 text-destructive" aria-hidden="true" />
           Batalkan Dokumen
-        </SubmitButton>
+        </ConfirmSubmitButton>
       </div>
     </form>
   );

@@ -1,31 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { ExternalLink, Eye, FileText, Inbox, UploadCloud } from "lucide-react";
+import { UploadCloud } from "lucide-react";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
-import { StatusBadge } from "@/components/ui/status-badge";
-
-export type ReviewQueueItem = {
-  id: string;
-  subject: string;
-  recipient: string;
-  letterDate: string;
-  status: string;
-  revisionRound: number;
-  googleDocUrl: string | null;
-  storedDocumentLabel: string | null;
-  storedDocumentMeta: string | null;
-  storedDocumentUrl: string | null;
-  correctionNoteLabel?: string | null;
-  correctionNote?: string | null;
-  creatorName: string;
-  teamName: string;
-  updatedAt: string;
-};
 
 type FieldErrorProps = {
   errors?: string[];
@@ -41,22 +21,6 @@ type SubmitButtonProps = {
   children: React.ReactNode;
   pendingChildren?: React.ReactNode;
   variant?: "default" | "outline" | "secondary" | "ghost";
-};
-
-type QueueHeaderProps = {
-  count: number;
-  description: string;
-  title: string;
-};
-
-type EmptyWorkflowStateProps = {
-  description: string;
-  title: string;
-};
-
-type LetterSummaryProps<TLetter extends ReviewQueueItem> = {
-  letter: TLetter;
-  roundLabel: string;
 };
 
 type FileInputFieldProps = {
@@ -98,36 +62,44 @@ export function SubmitButton({
   );
 }
 
-export function QueueHeader({ count, description, title }: QueueHeaderProps) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        <h2 className="break-words text-lg font-semibold">{title}</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-          {description}
-        </p>
-      </div>
-      <span className="inline-flex w-fit shrink-0 items-center rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary">
-        {count} dokumen
-      </span>
-    </div>
-  );
-}
+type ConfirmSubmitButtonProps = SubmitButtonProps & {
+  /** Short reason shown when armed, e.g. "Ini mengubah status dokumen." */
+  confirmHint?: string;
+};
 
-export function EmptyWorkflowState({
-  description,
-  title,
-}: EmptyWorkflowStateProps) {
+/**
+ * Inline confirm gate for status-changing actions. First click "arms" the
+ * action; the real submit only fires on the confirm click. Purely a UI guard
+ * against accidental clicks; the server action remains the authority.
+ */
+export function ConfirmSubmitButton({
+  children,
+  pendingChildren,
+  variant,
+  confirmHint = "Tindakan ini mengubah status dokumen.",
+}: ConfirmSubmitButtonProps) {
+  const [armed, setArmed] = useState(false);
+
+  if (!armed) {
+    return (
+      <Button onClick={() => setArmed(true)} type="button" variant={variant}>
+        {children}
+      </Button>
+    );
+  }
+
   return (
-    <section className="rounded-lg border bg-card px-5 py-8 text-center">
-      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
-        <Inbox className="h-5 w-5" aria-hidden="true" />
-      </div>
-      <h2 className="mt-4 text-lg font-semibold">{title}</h2>
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-    </section>
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <span className="text-xs leading-5 text-muted-foreground">
+        {confirmHint}
+      </span>
+      <Button onClick={() => setArmed(false)} type="button" variant="ghost">
+        Batal
+      </Button>
+      <SubmitButton pendingChildren={pendingChildren} variant={variant}>
+        {children}
+      </SubmitButton>
+    </div>
   );
 }
 
@@ -144,104 +116,6 @@ export function formatDateTime(value: string) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
-}
-
-export function LetterSummary<TLetter extends ReviewQueueItem>({
-  letter,
-  roundLabel,
-}: LetterSummaryProps<TLetter>) {
-  return (
-    <>
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="min-w-0 break-words text-sm font-medium text-muted-foreground">
-              {letter.teamName}
-            </p>
-            <StatusBadge status={letter.status} />
-          </div>
-          <h3 className="mt-2 break-words text-xl font-semibold leading-7">
-            {letter.subject}
-          </h3>
-          <dl className="mt-4 grid gap-x-6 gap-y-4 text-sm text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
-            <div className="min-w-0">
-              <dt className="font-medium text-foreground">Penyusun</dt>
-              <dd className="mt-1 break-words">{letter.creatorName}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="font-medium text-foreground">Tujuan</dt>
-              <dd className="mt-1 break-words">{letter.recipient}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="font-medium text-foreground">Tanggal Naskah</dt>
-              <dd className="mt-1 break-words">
-                {formatDate(letter.letterDate)}
-              </dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="font-medium text-foreground">Update</dt>
-              <dd className="mt-1 break-words">
-                {formatDateTime(letter.updatedAt)}
-              </dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:max-w-sm xl:justify-end">
-          <span className="shrink-0 rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
-            {roundLabel}
-          </span>
-          <Button asChild size="sm" variant="outline">
-            <Link href={`/letters/${letter.id}`}>
-              <Eye className="h-4 w-4" aria-hidden="true" />
-              Detail
-            </Link>
-          </Button>
-          {letter.storedDocumentUrl ? (
-            <Button asChild size="sm" variant="outline">
-              <a
-                href={letter.storedDocumentUrl}
-                rel="noreferrer"
-                target="_blank"
-                title={letter.storedDocumentMeta ?? undefined}
-              >
-                <FileText className="h-4 w-4" aria-hidden="true" />
-                {letter.storedDocumentLabel ?? "Unduh Dokumen"}
-              </a>
-            </Button>
-          ) : null}
-          {letter.googleDocUrl ? (
-            <Button asChild size="sm" variant="outline">
-              <a href={letter.googleDocUrl} rel="noreferrer" target="_blank">
-                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                Google Docs
-              </a>
-            </Button>
-          ) : !letter.storedDocumentUrl ? (
-            <span className="max-w-full rounded-md border px-3 py-2 text-sm leading-5 text-muted-foreground">
-              Dokumen kerja kosong
-            </span>
-          ) : null}
-          {letter.storedDocumentMeta ? (
-            <span className="w-full break-words text-left text-xs leading-5 text-muted-foreground xl:text-right">
-              {letter.storedDocumentMeta}
-            </span>
-          ) : null}
-        </div>
-      </div>
-
-      {letter.correctionNote ? (
-        <div className="rounded-md bg-muted/40 px-4 py-3">
-          <p className="text-sm font-medium">
-            {letter.correctionNoteLabel ?? "Catatan koreksi"}
-          </p>
-          <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-muted-foreground">
-            {letter.correctionNote}
-          </p>
-        </div>
-      ) : null}
-    </>
-  );
 }
 
 export function FileInputField({

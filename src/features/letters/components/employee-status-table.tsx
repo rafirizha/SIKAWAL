@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Eye, FileText, ListFilter, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ListFilter, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -17,6 +17,7 @@ import type { EmployeeStatusItem } from "@/server/queries/employee-status-querie
 type EmployeeStatusTableProps = {
   items: EmployeeStatusItem[];
   initialStatus?: string;
+  actionableIds?: string[];
 };
 
 function normalizeSearchValue(value: string) {
@@ -50,48 +51,29 @@ function getVersionLabel(item: EmployeeStatusItem) {
   return `v${item.latestVersionNumber} - ${item.latestVersionTitle}`;
 }
 
-function DocumentActions({ item }: { item: EmployeeStatusItem }) {
+function ActionableBadge() {
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button asChild size="sm" variant="outline">
-        <Link href={`/letters/${item.id}`}>
-          <Eye className="h-4 w-4" aria-hidden="true" />
-          Detail
-        </Link>
-      </Button>
-      {item.storedDocumentUrl ? (
-        <Button asChild size="sm" variant="outline">
-          <a
-            href={item.storedDocumentUrl}
-            rel="noreferrer"
-            target="_blank"
-            title={item.storedDocumentMeta ?? undefined}
-          >
-            <FileText className="h-4 w-4" aria-hidden="true" />
-            Unduh
-          </a>
-        </Button>
-      ) : null}
-      {item.googleDocUrl ? (
-        <Button asChild size="sm" variant="outline">
-          <a href={item.googleDocUrl} rel="noreferrer" target="_blank">
-            <ExternalLink className="h-4 w-4" aria-hidden="true" />
-            Docs
-          </a>
-        </Button>
-      ) : null}
-    </div>
+    <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+      Perlu aksi
+    </span>
   );
 }
 
 export function EmployeeStatusTable({
   items,
   initialStatus,
+  actionableIds = [],
 }: EmployeeStatusTableProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const statusOptions = useMemo(
     () => Array.from(new Set(items.map((item) => item.status))),
     [items],
+  );
+  const actionableSet = useMemo(
+    () => new Set(actionableIds),
+    [actionableIds],
   );
   const [selectedStatus, setSelectedStatus] = useState(() =>
     initialStatus && statusOptions.some((option) => option === initialStatus)
@@ -118,8 +100,8 @@ export function EmployeeStatusTable({
               Status Dokumen
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Pantau posisi naskah, versi terakhir, dan dokumen kerja yang
-              tersimpan di SIKAWAL.
+              Klik baris untuk membuka detail naskah, melihat versi, dan
+              menjalankan aksi yang tersedia.
             </p>
           </div>
           <span className="inline-flex w-fit items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
@@ -166,8 +148,12 @@ export function EmployeeStatusTable({
       </div>
 
       {items.length === 0 ? (
-        <div className="px-5 py-8 text-sm leading-6 text-muted-foreground">
-          Belum ada dokumen yang bisa diakses akun ini.
+        <div className="px-5 py-10 text-center">
+          <p className="text-sm font-medium">Belum ada dokumen</p>
+          <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-muted-foreground">
+            Naskah yang bisa Anda akses akan tampil di sini beserta status,
+            versi terakhir, dan dokumen kerja yang tersimpan.
+          </p>
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="px-5 py-8 text-sm leading-6 text-muted-foreground">
@@ -177,7 +163,11 @@ export function EmployeeStatusTable({
         <>
           <div className="divide-y lg:hidden">
             {filteredItems.map((item) => (
-              <article className="px-5 py-4" key={item.id}>
+              <Link
+                className="block px-5 py-4 transition-colors hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
+                href={`/letters/${item.id}`}
+                key={item.id}
+              >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <p className="break-words font-medium">{item.subject}</p>
@@ -188,7 +178,10 @@ export function EmployeeStatusTable({
                       {item.teamName}
                     </p>
                   </div>
-                  <StatusBadge status={item.status} />
+                  <div className="flex shrink-0 flex-col items-start gap-1.5 sm:items-end">
+                    <StatusBadge status={item.status} />
+                    {actionableSet.has(item.id) ? <ActionableBadge /> : null}
+                  </div>
                 </div>
 
                 <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -210,11 +203,6 @@ export function EmployeeStatusTable({
                     <dd className="mt-1 break-words font-medium">
                       {getVersionLabel(item)}
                     </dd>
-                    {item.storedDocumentMeta ? (
-                      <dd className="mt-1 break-words text-xs leading-5 text-muted-foreground">
-                        {item.storedDocumentMeta}
-                      </dd>
-                    ) : null}
                   </div>
                   <div className="min-w-0">
                     <dt className="text-xs font-medium text-muted-foreground">
@@ -225,33 +213,36 @@ export function EmployeeStatusTable({
                     </dd>
                   </div>
                 </dl>
-
-                <div className="mt-4">
-                  <DocumentActions item={item} />
-                </div>
-              </article>
+              </Link>
             ))}
           </div>
 
           <div className="hidden overflow-x-auto lg:block">
-            <table className="w-full min-w-[980px] table-fixed text-left text-sm">
+            <table className="w-full min-w-[860px] table-fixed text-left text-sm">
               <thead className="border-b bg-muted/40 text-xs uppercase text-muted-foreground">
                 <tr>
-                  <th className="w-[28%] px-5 py-3 font-medium">Dokumen</th>
-                  <th className="w-[18%] px-4 py-3 font-medium">Status</th>
-                  <th className="w-[17%] px-4 py-3 font-medium">Tahap</th>
-                  <th className="w-[22%] px-4 py-3 font-medium">Versi</th>
-                  <th className="w-[15%] px-4 py-3 font-medium">Update</th>
-                  <th className="w-[170px] px-5 py-3 text-right font-medium">
-                    Aksi
-                  </th>
+                  <th className="w-[32%] px-5 py-3 font-medium">Dokumen</th>
+                  <th className="w-[20%] px-4 py-3 font-medium">Status</th>
+                  <th className="w-[18%] px-4 py-3 font-medium">Tahap</th>
+                  <th className="w-[18%] px-4 py-3 font-medium">Versi</th>
+                  <th className="w-[12%] px-4 py-3 font-medium">Update</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {filteredItems.map((item) => (
-                  <tr key={item.id} className="align-top">
+                  <tr
+                    key={item.id}
+                    className="cursor-pointer align-top transition-colors hover:bg-muted/40"
+                    onClick={() => router.push(`/letters/${item.id}`)}
+                  >
                     <td className="px-5 py-4">
-                      <p className="break-words font-medium">{item.subject}</p>
+                      <Link
+                        className="break-words font-medium hover:underline focus-visible:underline focus-visible:outline-none"
+                        href={`/letters/${item.id}`}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {item.subject}
+                      </Link>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">
                         {item.recipient} - {formatDate(item.letterDate)}
                       </p>
@@ -260,7 +251,10 @@ export function EmployeeStatusTable({
                       </p>
                     </td>
                     <td className="px-4 py-4">
-                      <StatusBadge status={item.status} />
+                      <div className="flex flex-col items-start gap-1.5">
+                        <StatusBadge status={item.status} />
+                        {actionableSet.has(item.id) ? <ActionableBadge /> : null}
+                      </div>
                     </td>
                     <td className="px-4 py-4">
                       <p className="break-words font-medium">
@@ -285,11 +279,6 @@ export function EmployeeStatusTable({
                     </td>
                     <td className="px-4 py-4 text-muted-foreground">
                       {formatDateTime(item.updatedAt)}
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex justify-end">
-                        <DocumentActions item={item} />
-                      </div>
                     </td>
                   </tr>
                 ))}

@@ -26,6 +26,13 @@
 }
 
 html {
+  /*
+   * Legibility-first: bump the root size so every rem-based font and spacing
+   * scales up uniformly (Tailwind breakpoints are px-based, so layout columns
+   * don't shift). Target users are non-technical staff reading under bright
+   * office lighting. 112.5% = 18px base.
+   */
+  font-size: 112.5%;
   background: hsl(var(--background));
 }
 

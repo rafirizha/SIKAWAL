@@ -33,7 +33,7 @@ export default async function ProfilePage() {
   const teamName = await getTeamName(currentUser.teamId);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-5 py-6 sm:px-6 sm:py-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 px-5 py-6 sm:px-6 sm:py-8">
       <section className="rounded-lg border bg-card p-6 shadow-sm">
         <p className="text-sm font-medium text-primary">Profil</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">

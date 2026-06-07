@@ -2,7 +2,10 @@ import "server-only";
 
 import {
   canCancelLetter,
+  canCompleteGeneralSubdivisionCorrection,
+  canCompleteHeadCorrection,
   canCreateFinalVersion,
+  canSubmitRevision,
   canViewAuditLog,
   canViewLetter,
 } from "@/lib/permissions/letter-permissions";
@@ -159,6 +162,9 @@ export type LetterDetail = {
   teamName: string;
   createdAt: string;
   updatedAt: string;
+  canCorrectGeneralSubdivision: boolean;
+  canSubmitRevision: boolean;
+  canCompleteHeadCorrection: boolean;
   canCreateFinal: boolean;
   canCancel: boolean;
   canViewAudit: boolean;
@@ -361,6 +367,15 @@ export async function getLetterDetail(
     teamName: teamMap.get(letterRow.team_id)?.name ?? "Tim tidak ditemukan",
     createdAt: letterRow.created_at,
     updatedAt: letterRow.updated_at,
+    canCorrectGeneralSubdivision: canCompleteGeneralSubdivisionCorrection(
+      currentUser,
+      permissionLetter,
+    ),
+    canSubmitRevision: canSubmitRevision(currentUser, permissionLetter),
+    canCompleteHeadCorrection: canCompleteHeadCorrection(
+      currentUser,
+      permissionLetter,
+    ),
     canCreateFinal: canCreateFinalVersion(currentUser, permissionLetter),
     canCancel: canCancelLetter(currentUser, permissionLetter),
     canViewAudit,

@@ -4,6 +4,7 @@ import {
   DashboardSummary,
   type DashboardTask,
 } from "@/features/dashboard/components/dashboard-summary";
+import { FirstRunGuide } from "@/features/dashboard/components/first-run-guide";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { canCreateDraft } from "@/lib/permissions/letter-permissions";
 import { LETTER_STATUS } from "@/lib/workflow/constants";
@@ -91,7 +92,8 @@ export default async function DashboardPage() {
   const canStartDraft = canCreateDraft(currentUser);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-7 px-5 py-6 sm:px-6 sm:py-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-screen-2xl flex-col gap-7 px-5 py-6 sm:px-6 sm:py-8">
+      <FirstRunGuide currentUserRole={currentUser.role} />
       <DashboardSummary
         activeReviewCount={activeReviewCount}
         approvedCount={approvedCount}

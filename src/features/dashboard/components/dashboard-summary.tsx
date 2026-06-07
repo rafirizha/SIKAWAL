@@ -124,8 +124,7 @@ function TaskLaunchpad({ tasks }: { tasks: DashboardTask[] }) {
     <div className="flex h-full flex-col rounded-lg border bg-card p-6 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-primary">Langkah berikutnya</p>
-          <h2 className="mt-2 text-lg font-semibold">Tugas menunggu kamu</h2>
+          <h2 className="text-lg font-semibold">Tugas menunggu Anda</h2>
         </div>
         <span
           className={cn(
@@ -167,7 +166,7 @@ function TaskLaunchpad({ tasks }: { tasks: DashboardTask[] }) {
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <Button asChild>
-              <Link href="/letters#tugas-aktif">
+              <Link href="/letters#dokumen">
                 Tinjau antrean ({taskCount})
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -175,7 +174,7 @@ function TaskLaunchpad({ tasks }: { tasks: DashboardTask[] }) {
             {taskCount > 4 ? (
               <Link
                 className="text-sm font-medium text-primary hover:underline"
-                href="/letters#tugas-aktif"
+                href="/letters#dokumen"
               >
                 +{taskCount - 4} lainnya
               </Link>
@@ -188,7 +187,7 @@ function TaskLaunchpad({ tasks }: { tasks: DashboardTask[] }) {
             <Inbox className="h-5 w-5" aria-hidden="true" />
           </span>
           <p className="text-sm leading-6 text-muted-foreground">
-            Tidak ada tugas yang menunggu aksimu. Semua naskah sudah
+            Tidak ada tugas yang menunggu aksi Anda. Semua naskah sudah
             ditindaklanjuti.
           </p>
           <Button asChild size="sm" variant="outline">
@@ -308,7 +307,7 @@ export function DashboardSummary({
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
                 {currentUserName} - {currentUserRole}. Pantau apa yang menunggu
-                aksimu, lalu lihat distribusi status dan dokumen terbaru.
+                aksi Anda, lalu lihat distribusi status dan dokumen terbaru.
               </p>
             </div>
 
@@ -353,7 +352,7 @@ export function DashboardSummary({
             const widthPercent =
               row.count === 0 || distributionTotal === 0
                 ? 0
-                : Math.max((row.count / distributionTotal) * 100, 4);
+                : Math.max((row.count / distributionTotal) * 100, 6);
 
             return (
               <Link
@@ -385,9 +384,12 @@ export function DashboardSummary({
                     />
                   </dd>
                 </div>
-                <div className="mt-2 h-2 rounded-full bg-muted">
+                <div className="mt-2 h-2.5 rounded-full bg-muted">
                   <div
-                    className={cn("h-2 rounded-full", statusBarTone(row.status))}
+                    className={cn(
+                      "h-2.5 rounded-full",
+                      statusBarTone(row.status),
+                    )}
                     style={{ width: `${widthPercent}%` }}
                   />
                 </div>
@@ -438,9 +440,27 @@ export function DashboardSummary({
               </Link>
             ))
           ) : (
-            <div className="rounded-lg border bg-muted/30 p-5 text-sm leading-6 text-muted-foreground">
-              Belum ada dokumen aktif. Dashboard tetap siap, tinggal mulai dari
-              draft pertama.
+            <div className="rounded-lg border border-dashed bg-muted/20 p-6">
+              <p className="text-sm font-medium">Belum ada dokumen</p>
+              <p className="mt-1 max-w-md text-sm leading-6 text-muted-foreground">
+                Dokumen yang Anda buat atau yang menunggu aksi Anda akan muncul
+                di sini, lengkap dengan status dan jejak koreksinya.
+              </p>
+              {canStartDraft ? (
+                <Button asChild className="mt-4" size="sm">
+                  <Link href="/letters/new">
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    Buat draft pertama
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild className="mt-4" size="sm" variant="outline">
+                  <Link href="/letters#dokumen">
+                    <FileText className="h-4 w-4" aria-hidden="true" />
+                    Lihat semua dokumen
+                  </Link>
+                </Button>
+              )}
             </div>
           )}
         </div>

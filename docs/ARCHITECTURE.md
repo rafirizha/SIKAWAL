@@ -99,6 +99,18 @@ UI tidak boleh menjadi sumber utama:
 - Pembuatan audit log.
 - Keputusan reviewer berikutnya.
 
+#### Pola navigasi dan aksi
+
+- Daftar dokumen (`/letters`) hanya menampilkan tabel ringkas. Tidak ada daftar
+  antrean terpisah; baris tabel diklik untuk membuka detail.
+- Aksi workflow (koreksi Kasubbag Umum, revisi Pegawai, koreksi/approval Kepala
+  BPS, finalisasi, pembatalan) dijalankan dari halaman detail dokumen
+  (`/letters/[letterId]`), bukan dari daftar. Form aksi ditampilkan sesuai role
+  dan status dokumen; server tetap memvalidasi permission.
+- Dashboard menampilkan ringkasan dan menandai dokumen yang menunggu aksi user;
+  tabel `/letters` juga menandai baris "Perlu aksi". Penanda hanya bantuan UI,
+  bukan penentu izin.
+
 ### Server Actions/API Layer
 
 Contoh action:

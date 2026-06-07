@@ -7,6 +7,11 @@ import {
   CancelLetterForm,
   FinalLetterForm,
 } from "@/features/letters/components/letter-final-actions";
+import {
+  GeneralSubdivisionActions,
+  HeadCorrectionActions,
+  RevisionActions,
+} from "@/features/letters/components/workflow-action-forms";
 import type {
   LetterDetail,
   LetterDetailAuditLog,
@@ -139,10 +144,15 @@ function VersionCard({ version }: { version: LetterDetailVersion }) {
 }
 
 export function LetterDetailView({ detail }: LetterDetailViewProps) {
-  const showActions = detail.canCreateFinal || detail.canCancel;
+  const showActions =
+    detail.canCorrectGeneralSubdivision ||
+    detail.canSubmitRevision ||
+    detail.canCompleteHeadCorrection ||
+    detail.canCreateFinal ||
+    detail.canCancel;
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-5 py-6 sm:px-6 sm:py-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-screen-2xl flex-col gap-6 px-5 py-6 sm:px-6 sm:py-8">
       <div>
         <BackButton fallbackHref="/letters" />
       </div>
@@ -214,31 +224,51 @@ export function LetterDetailView({ detail }: LetterDetailViewProps) {
       </section>
 
       {showActions ? (
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
-          {detail.canCreateFinal ? (
-            <details className="rounded-lg border bg-card p-5" open>
-              <summary className="cursor-pointer text-sm font-semibold">
-                Buat Final Internal
-              </summary>
-              <div className="mt-4">
-                <FinalLetterForm
-                  defaultGoogleDocUrl={detail.googleDocUrl}
-                  letterId={detail.id}
-                />
-              </div>
-            </details>
-          ) : null}
+        <section className="rounded-lg border bg-card p-5 shadow-sm sm:p-6">
+          <h2 className="text-lg font-semibold">Aksi</h2>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Tindakan tersedia sesuai peran Anda dan status dokumen saat ini.
+          </p>
 
-          {detail.canCancel ? (
-            <details className="rounded-lg border bg-card p-5">
-              <summary className="cursor-pointer text-sm font-semibold">
-                Batalkan Dokumen
-              </summary>
-              <div className="mt-4">
-                <CancelLetterForm letterId={detail.id} />
+          <div className="mt-5 flex flex-col gap-5">
+            {detail.canCorrectGeneralSubdivision ? (
+              <GeneralSubdivisionActions letterId={detail.id} />
+            ) : null}
+
+            {detail.canSubmitRevision ? (
+              <RevisionActions
+                defaultGoogleDocUrl={detail.googleDocUrl}
+                letterId={detail.id}
+              />
+            ) : null}
+
+            {detail.canCompleteHeadCorrection ? (
+              <HeadCorrectionActions letterId={detail.id} />
+            ) : null}
+
+            {detail.canCreateFinal ? (
+              <div>
+                <h3 className="text-sm font-semibold">Buat Final Internal</h3>
+                <div className="mt-4">
+                  <FinalLetterForm
+                    defaultGoogleDocUrl={detail.googleDocUrl}
+                    letterId={detail.id}
+                  />
+                </div>
               </div>
-            </details>
-          ) : null}
+            ) : null}
+
+            {detail.canCancel ? (
+              <details className="rounded-lg border bg-muted/20 p-4">
+                <summary className="cursor-pointer text-sm font-semibold">
+                  Batalkan Dokumen
+                </summary>
+                <div className="mt-4">
+                  <CancelLetterForm letterId={detail.id} />
+                </div>
+              </details>
+            ) : null}
+          </div>
         </section>
       ) : null}
 
